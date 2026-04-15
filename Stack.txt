@@ -1,0 +1,15 @@
+Frontend: React
+Full-stack framework: Next.js
+Backend: Next.js Route Handlers / Server Actions / API layer
+Database: PostgreSQL
+ORM / data layer: Prisma
+Auth: Auth.js or Clerk
+Payments: Stripe
+CMS/Admin approach: custom headless CMS/admin built inside the Next.js app with dedicated admin routes and API-backed content management
+Styling: Tailwind CSS
+Forms/validation: React Hook Form + Zod
+Deployment target: Vercel
+Storage/media: S3 or equivalent object storage
+Email: Resend
+Search: PostgreSQL full-text search with abstraction for future Algolia/Meilisearch upgrade
+Analytics: PostHog or GA4-ready hooks
