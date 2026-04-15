@@ -6,3 +6,13 @@ dist
 .DS_Store
 coverage
 .turbo
+
+# Cross-platform OS & local editor
+.AppleDouble
+.LSOverride
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+*.swp
+*.swo
+*~

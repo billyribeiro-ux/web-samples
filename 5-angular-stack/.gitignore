@@ -6,6 +6,14 @@ coverage
 .env.local
 *.log
 .DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+*.swp
+*.swo
+*~
 apps/api/dist
 apps/web/.angular/cache
 

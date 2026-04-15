@@ -7,3 +7,13 @@ dist
 apps/api/prisma/migrations/**/migration_lock.toml
 coverage
 .turbo
+
+# Cross-platform OS & local editor
+.AppleDouble
+.LSOverride
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+*.swp
+*.swo
+*~

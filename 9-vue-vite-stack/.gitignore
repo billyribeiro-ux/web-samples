@@ -4,6 +4,14 @@ dist
 .env.local
 *.log
 .DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+*.swp
+*.swo
+*~
 apps/api/dist
 packages/db/node_modules
 .turbo

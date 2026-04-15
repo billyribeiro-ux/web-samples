@@ -12,7 +12,14 @@ pnpm-debug.log
 
 # OS
 .DS_Store
+.AppleDouble
+.LSOverride
 Thumbs.db
+ehthumbs.db
+Desktop.ini
+*.swp
+*.swo
+*~
 
 # Env
 .env
