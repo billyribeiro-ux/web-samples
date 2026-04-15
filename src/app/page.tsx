@@ -1,101 +1,82 @@
-import Image from "next/image";
+const stack = [
+  { name: "Next.js 15", detail: "App Router, Turbopack dev" },
+  { name: "React 19", detail: "Server & client components" },
+  { name: "Tailwind CSS", detail: "Utility-first styling" },
+  { name: "Prisma", detail: "Database client (schema not added yet)" },
+  { name: "Auth.js v5", detail: "Credentials / OAuth ready to wire" },
+  { name: "Stripe & Resend", detail: "Payments & email (integrate as needed)" },
+];
 
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
+    <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)]">
+      <div className="mx-auto flex max-w-3xl flex-col gap-10 px-6 py-16 sm:py-24">
+        <header className="space-y-3">
+          <p className="text-sm font-medium uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
+            web-samples / 1-react-stack
+          </p>
+          <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
+            Next.js sample (scaffold)
+          </h1>
+          <p className="max-w-2xl text-base leading-relaxed text-neutral-600 dark:text-neutral-300">
+            This folder is intentionally minimal: it is the default{" "}
+            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-sm dark:bg-white/[.08]">
+              create-next-app
+            </code>{" "}
+            shell plus dependencies listed in{" "}
+            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-sm dark:bg-white/[.08]">
+              package.json
             </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+            . There are no feature routes yet—only this page and the root layout.
+          </p>
+        </header>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
+        <section className="rounded-2xl border border-black/[.08] bg-black/[.02] p-6 dark:border-white/[.12] dark:bg-white/[.03]">
+          <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
+            Declared stack
+          </h2>
+          <ul className="divide-y divide-black/[.06] dark:divide-white/[.08]">
+            {stack.map((item) => (
+              <li
+                key={item.name}
+                className="flex flex-col gap-0.5 py-3 first:pt-0 last:pb-0 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6"
+              >
+                <span className="font-medium">{item.name}</span>
+                <span className="text-sm text-neutral-600 dark:text-neutral-400">
+                  {item.detail}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <section className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
           <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+            className="inline-flex h-11 items-center justify-center rounded-full bg-[var(--foreground)] px-6 text-sm font-medium text-[var(--background)] transition-opacity hover:opacity-90"
+            href="https://nextjs.org/docs"
             target="_blank"
             rel="noopener noreferrer"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
+            Next.js docs
           </a>
           <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+            className="inline-flex h-11 items-center justify-center rounded-full border border-black/[.12] px-6 text-sm font-medium dark:border-white/[.18]"
+            href="https://github.com/vercel/next.js/tree/canary/examples"
             target="_blank"
             rel="noopener noreferrer"
           >
-            Read our docs
+            Official examples
           </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+        </section>
+
+        <p className="text-sm text-neutral-500 dark:text-neutral-500">
+          Edit{" "}
+          <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono dark:bg-white/[.08]">
+            src/app/page.tsx
+          </code>{" "}
+          to build out this sample.
+        </p>
+      </div>
     </div>
   );
 }
