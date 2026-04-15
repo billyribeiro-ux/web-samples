@@ -1,0 +1,14 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Checkout" noindex={true}>
+  <div class="mx-auto max-w-xl px-4 py-16">
+    <h1 class="text-3xl font-semibold text-white">Checkout</h1>
+    <p class="mt-4 text-slate-400">
+      For subscriptions and one-off purchases we redirect to Stripe Checkout from pricing and product pages. Configure Stripe Price IDs on
+      plans and products to enable live payments.
+    </p>
+    <a href="/pricing" class="mt-8 inline-block text-emerald-400 hover:underline">Go to pricing</a>
+  </div>
+</BaseLayout>

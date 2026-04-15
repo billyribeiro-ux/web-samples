@@ -1,0 +1,27 @@
+---
+import AccountLayout from '@/layouts/AccountLayout.astro';
+import { prisma } from '@/lib/prisma';
+
+const user = Astro.locals.user;
+if (!user) throw new Error('unreachable');
+
+const orders = await prisma.order.findMany({
+  where: { userId: user.id },
+  orderBy: { createdAt: 'desc' },
+  take: 50,
+});
+---
+
+<AccountLayout title="Orders">
+  {orders.length === 0 && <p class="text-slate-400">No orders yet.</p>}
+  <ul class="space-y-3">
+    {orders.map((o) => (
+      <li class="flex justify-between rounded-lg border border-slate-800 bg-slate-900/40 px-4 py-3 text-sm">
+        <span class="text-white">{o.id.slice(0, 8)}…</span>
+        <span class="text-slate-400">
+          {o.status} · ${(o.total / 100).toFixed(2)} {o.currency.toUpperCase()}
+        </span>
+      </li>
+    ))}
+  </ul>
+</AccountLayout>

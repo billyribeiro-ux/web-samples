@@ -1,0 +1,26 @@
+---
+import AdminLayout from '@/layouts/AdminLayout.astro';
+import { prisma } from '@/lib/prisma';
+
+const leads = await prisma.formSubmission.findMany({ orderBy: { createdAt: 'desc' }, take: 50 });
+const newsletter = await prisma.newsletterLead.findMany({ orderBy: { createdAt: 'desc' }, take: 50 });
+---
+
+<AdminLayout>
+  <h1 class="text-2xl font-semibold text-white">Leads</h1>
+  <h2 class="mt-8 text-lg text-white">Form submissions</h2>
+  <ul class="mt-2 space-y-2 text-xs text-slate-400">
+    {leads.map((l) => (
+      <li class="rounded border border-slate-800 p-2">
+        {l.formType} · {l.createdAt.toISOString()}
+        <pre class="mt-1 overflow-x-auto text-slate-500">{JSON.stringify(l.payload, null, 2)}</pre>
+      </li>
+    ))}
+  </ul>
+  <h2 class="mt-10 text-lg text-white">Newsletter</h2>
+  <ul class="mt-2 text-sm text-slate-400">
+    {newsletter.map((n) => (
+      <li>{n.email}</li>
+    ))}
+  </ul>
+</AdminLayout>

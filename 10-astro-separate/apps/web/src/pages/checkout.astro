@@ -1,0 +1,44 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { apiUrl } from "../lib/api";
+
+const checkoutUrl = apiUrl("/v1/checkout/cart");
+---
+<Layout title="Checkout" description="Stripe Checkout (test mode)">
+  <h1 class="text-3xl font-semibold">Checkout</h1>
+  <p class="mt-3 text-slate-600">Creates a Stripe Checkout session from your server-linked cart.</p>
+  <form id="checkout-form" class="mt-8 max-w-md space-y-4">
+    <div>
+      <label class="block text-sm font-medium" for="email">Email</label>
+      <input class="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" id="email" name="email" type="email" required />
+    </div>
+    <p id="co-status" class="text-sm text-slate-600" role="status" />
+    <button class="rounded-md bg-accent px-4 py-2 text-sm font-semibold text-white" type="submit">Pay with Stripe</button>
+  </form>
+  <script define:vars={{ checkoutUrl }}>
+    const site = window.location.origin;
+    document.getElementById("checkout-form")?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const status = document.getElementById("co-status");
+      const email = (document.getElementById("email") as HTMLInputElement).value;
+      status.textContent = "Starting checkout…";
+      const guest = sessionStorage.getItem("guestCart");
+      const res = await fetch(checkoutUrl, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          ...(guest ? { "X-Guest-Cart": guest } : {}),
+        },
+        body: JSON.stringify({
+          email,
+          successUrl: `${site}/thank-you`,
+          cancelUrl: `${site}/cart`,
+        }),
+      });
+      const j = await res.json().catch(() => ({}));
+      if (res.ok && j.url) window.location.href = j.url;
+      else status.textContent = j?.error?.message ?? "Checkout unavailable (configure Stripe keys).";
+    });
+  </script>
+</Layout>

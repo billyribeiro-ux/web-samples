@@ -1,0 +1,475 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum SessionScope {
+  MEMBER
+  ADMIN
+}
+
+enum PostStatus {
+  DRAFT
+  PUBLISHED
+  SCHEDULED
+}
+
+enum PageStatus {
+  DRAFT
+  PUBLISHED
+}
+
+enum ProductStatus {
+  DRAFT
+  ACTIVE
+  ARCHIVED
+}
+
+enum ProductType {
+  DIGITAL
+  SERVICE
+  PHYSICAL
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  FULFILLED
+  CANCELLED
+  REFUNDED
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  PAST_DUE
+  CANCELED
+  TRIALING
+  INCOMPLETE
+}
+
+enum FormSubmissionType {
+  CONTACT
+  NEWSLETTER
+  LEAD
+  SUPPORT
+  CHECKOUT
+}
+
+model User {
+  id                      String                   @id @default(cuid())
+  email                   String                   @unique
+  passwordHash            String
+  name                    String?
+  emailVerifiedAt         DateTime?
+  stripeCustomerId        String?
+  createdAt               DateTime                 @default(now())
+  updatedAt               DateTime                 @updatedAt
+  sessions                Session[]
+  roles                   UserRole[]
+  subscriptions           Subscription[]
+  orders                  Order[]
+  favorites               Favorite[]
+  notificationPreference  NotificationPreference?
+  mediaAssets             MediaAsset[]
+  passwordResetTokens     PasswordResetToken[]
+  emailVerificationTokens EmailVerificationToken[]
+  cart                    Cart?
+}
+
+model Session {
+  id        String       @id @default(cuid())
+  userId    String
+  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String       @unique
+  scope     SessionScope
+  expiresAt DateTime
+  createdAt DateTime     @default(now())
+
+  @@index([userId])
+}
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+model EmailVerificationToken {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+model Role {
+  id          String           @id @default(cuid())
+  name        String           @unique
+  description String?
+  users       UserRole[]
+  permissions RolePermission[]
+}
+
+model Permission {
+  id    String           @id @default(cuid())
+  key   String           @unique
+  roles RolePermission[]
+}
+
+model RolePermission {
+  roleId         String
+  permissionId   String
+  role           Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission     Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+}
+
+model UserRole {
+  userId String
+  roleId String
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role   Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@id([userId, roleId])
+}
+
+model NotificationPreference {
+  userId         String  @id
+  user           User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  marketingEmail Boolean @default(true)
+  productUpdates Boolean @default(true)
+}
+
+model Plan {
+  id                   String         @id @default(cuid())
+  name                 String
+  slug                 String         @unique
+  description          String?
+  stripePriceIdMonthly String?
+  stripePriceIdYearly  String?
+  amountMonthlyCents   Int
+  amountYearlyCents    Int?
+  currency             String         @default("usd")
+  features             Json?
+  active               Boolean        @default(true)
+  subscriptions        Subscription[]
+}
+
+model Subscription {
+  id                   String             @id @default(cuid())
+  userId               String
+  user                 User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  planId               String
+  plan                 Plan               @relation(fields: [planId], references: [id])
+  status               SubscriptionStatus @default(INCOMPLETE)
+  stripeSubscriptionId String?            @unique
+  currentPeriodEnd     DateTime?
+  cancelAtPeriodEnd    Boolean            @default(false)
+  trialEndsAt          DateTime?
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+
+  @@index([userId])
+}
+
+model PromoCode {
+  id             String    @id @default(cuid())
+  code           String    @unique
+  percentOff     Int?
+  amountOffCents Int?
+  active         Boolean   @default(true)
+  expiresAt      DateTime?
+  createdAt      DateTime  @default(now())
+  orders         Order[]
+}
+
+model Product {
+  id              String          @id @default(cuid())
+  name            String
+  slug            String          @unique
+  description     String?
+  body            String?
+  priceCents      Int
+  currency        String          @default("usd")
+  type            ProductType     @default(DIGITAL)
+  status          ProductStatus   @default(DRAFT)
+  inventory       Int?
+  stripePriceId   String?
+  featuredImageId String?
+  featuredImage   MediaAsset?     @relation("ProductFeaturedImage", fields: [featuredImageId], references: [id])
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  categories      ProductCategory[]
+  tags            ProductTag[]
+  orderItems      OrderItem[]
+  favorites       Favorite[]
+  cartItems       CartItem[]
+}
+
+model ProductCategory {
+  productId  String
+  categoryId String
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@id([productId, categoryId])
+}
+
+model ProductTag {
+  productId String
+  tagId     String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  tag       Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([productId, tagId])
+}
+
+model Category {
+  id          String            @id @default(cuid())
+  name        String
+  slug        String            @unique
+  description String?
+  posts       PostCategory[]
+  products    ProductCategory[]
+}
+
+model Tag {
+  id        String       @id @default(cuid())
+  name      String
+  slug      String       @unique
+  posts     PostTag[]
+  products  ProductTag[]
+}
+
+model Author {
+  id       String      @id @default(cuid())
+  name     String
+  slug     String      @unique
+  bio      String?
+  avatarId String?
+  avatar   MediaAsset? @relation("AuthorAvatar", fields: [avatarId], references: [id])
+  posts    Post[]
+}
+
+model Post {
+  id              String      @id @default(cuid())
+  slug            String      @unique
+  title           String
+  excerpt         String?
+  body            String
+  status          PostStatus  @default(DRAFT)
+  publishedAt     DateTime?
+  scheduledAt     DateTime?
+  readingMinutes  Int?
+  featuredImageId String?
+  featuredImage   MediaAsset? @relation("PostFeaturedImage", fields: [featuredImageId], references: [id])
+  authorId        String?
+  author          Author?     @relation(fields: [authorId], references: [id])
+  seoTitle        String?
+  seoDescription  String?
+  canonicalUrl    String?
+  ogTitle         String?
+  ogDescription   String?
+  ogImageId       String?
+  twitterCard     String?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  categories      PostCategory[]
+  tags            PostTag[]
+  favorites       Favorite[]
+}
+
+model PostCategory {
+  postId     String
+  categoryId String
+  post       Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@id([postId, categoryId])
+}
+
+model PostTag {
+  postId String
+  tagId  String
+  post   Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  tag    Tag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([postId, tagId])
+}
+
+model Page {
+  id             String     @id @default(cuid())
+  slug           String     @unique
+  title          String
+  body           String
+  status         PageStatus @default(DRAFT)
+  publishedAt    DateTime?
+  seoTitle       String?
+  seoDescription String?
+  canonicalUrl   String?
+  ogImageId      String?
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+}
+
+model MediaAsset {
+  id           String    @id @default(cuid())
+  key          String    @unique
+  bucket       String
+  url          String
+  mimeType     String
+  sizeBytes    Int
+  alt          String?
+  title        String?
+  caption      String?
+  uploadedById String?
+  uploadedBy   User?     @relation(fields: [uploadedById], references: [id])
+  createdAt    DateTime  @default(now())
+  postsFeatured Post[]   @relation("PostFeaturedImage")
+  authorAvatars Author[] @relation("AuthorAvatar")
+  productsFeatured Product[] @relation("ProductFeaturedImage")
+}
+
+model Order {
+  id                      String      @id @default(cuid())
+  userId                  String?
+  user                    User?       @relation(fields: [userId], references: [id])
+  email                   String
+  status                  OrderStatus @default(PENDING)
+  stripeCheckoutSessionId String?     @unique
+  stripePaymentIntentId   String?
+  promoCodeId             String?
+  promoCode               PromoCode?  @relation(fields: [promoCodeId], references: [id])
+  totalCents              Int
+  currency                String      @default("usd")
+  createdAt               DateTime    @default(now())
+  updatedAt               DateTime    @updatedAt
+  items                   OrderItem[]
+}
+
+model OrderItem {
+  id             String  @id @default(cuid())
+  orderId        String
+  order          Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId      String
+  product        Product @relation(fields: [productId], references: [id])
+  quantity       Int
+  unitPriceCents Int
+
+  @@index([orderId])
+}
+
+model Favorite {
+  id        String  @id @default(cuid())
+  userId    String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  postId    String?
+  post      Post?   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  productId String?
+  product   Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@unique([userId, postId])
+  @@unique([userId, productId])
+}
+
+model Cart {
+  id        String     @id @default(cuid())
+  guestKey  String?    @unique
+  userId    String?    @unique
+  user      User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  items     CartItem[]
+}
+
+model CartItem {
+  id        String  @id @default(cuid())
+  cartId    String
+  cart      Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  quantity  Int     @default(1)
+
+  @@unique([cartId, productId])
+}
+
+model NavigationMenu {
+  id        String            @id @default(cuid())
+  name      String            @unique
+  items     NavigationItem[]
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+}
+
+model NavigationItem {
+  id        String         @id @default(cuid())
+  menuId    String
+  menu      NavigationMenu @relation(fields: [menuId], references: [id], onDelete: Cascade)
+  label     String
+  href      String
+  sortOrder Int            @default(0)
+}
+
+model FormSubmission {
+  id        String             @id @default(cuid())
+  type      FormSubmissionType
+  payload   Json
+  ip        String?
+  userAgent String?
+  createdAt DateTime           @default(now())
+}
+
+model NewsletterLead {
+  id        String   @id @default(cuid())
+  email     String
+  source    String?
+  createdAt DateTime @default(now())
+
+  @@unique([email])
+}
+
+model SiteSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     Json
+  updatedAt DateTime @updatedAt
+}
+
+model GatedContentRule {
+  id                     String  @id @default(cuid())
+  slug                   String  @unique
+  title                  String
+  body                   String
+  minPlanSlug            String?
+  requiresSubscription   Boolean @default(true)
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+}
+
+model StripeEvent {
+  id        String   @id @default(cuid())
+  eventId   String   @unique
+  payload   Json?
+  processed Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model RateLimitBucket {
+  id        String   @id @default(cuid())
+  key       String
+  windowKey String
+  count     Int      @default(0)
+  expiresAt DateTime
+
+  @@unique([key, windowKey])
+}

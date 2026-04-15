@@ -1,0 +1,30 @@
+{
+  "name": "@repo/api",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "echo skip-api-bundle",
+    "start": "node dist/server.js",
+    "lint": "echo ok"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.19.3",
+    "@aws-sdk/client-s3": "^3.787.0",
+    "@aws-sdk/s3-request-presigner": "^3.787.0",
+    "@hono/node-server": "^1.14.1",
+    "@repo/db": "workspace:*",
+    "argon2": "^0.41.1",
+    "hono": "^4.7.6",
+    "resend": "^4.2.0",
+    "stripe": "^18.0.0",
+    "zod": "^3.24.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.1",
+    "tsup": "^8.4.0",
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.3"
+  }
+}

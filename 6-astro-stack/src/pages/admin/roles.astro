@@ -1,0 +1,23 @@
+---
+import AdminLayout from '@/layouts/AdminLayout.astro';
+import { prisma } from '@/lib/prisma';
+
+const roles = await prisma.role.findMany({
+  include: { rolePermissions: { include: { permission: true } } },
+});
+---
+
+<AdminLayout>
+  <h1 class="text-2xl font-semibold text-white">Roles</h1>
+  <ul class="mt-6 space-y-4 text-sm">
+    {roles.map((r) => (
+      <li class="rounded-lg border border-slate-800 bg-slate-900/40 p-4">
+        <p class="font-medium text-white">{r.name}</p>
+        <p class="text-xs text-slate-500">{r.slug}</p>
+        <p class="mt-2 text-slate-400">
+          Permissions: {r.rolePermissions.map((rp) => rp.permission.slug).join(', ') || '—'}
+        </p>
+      </li>
+    ))}
+  </ul>
+</AdminLayout>

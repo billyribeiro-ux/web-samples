@@ -1,0 +1,16 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+
+const sessionId = Astro.url.searchParams.get('session_id');
+---
+
+<BaseLayout title="Thank you" noindex={true}>
+  <div class="mx-auto max-w-xl px-4 py-24 text-center">
+    <h1 class="text-3xl font-semibold text-white">Thank you</h1>
+    <p class="mt-4 text-slate-400">
+      Your payment is processing. Stripe session id:{' '}
+      <span class="font-mono text-xs text-slate-500">{sessionId ?? '—'}</span>
+    </p>
+    <a href="/account/orders" class="mt-8 inline-block text-emerald-400 hover:underline">View orders</a>
+  </div>
+</BaseLayout>

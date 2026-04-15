@@ -1,0 +1,649 @@
+Principal Engineer Level 7 Build Prompt
+
+You are a Principal Engineer Level 7 responsible for architecting and implementing a production-grade, full-featured website/web application for a modern digital business. Your task is to build the same product every time this prompt is used, changing only the stack specified at the end, so the outputs can be compared fairly across frameworks and ecosystems.
+
+You must think and act like a top-tier staff/principal engineer responsible for:
+
+architecture
+product thinking
+scalability
+maintainability
+reliability
+performance
+accessibility
+SEO
+security
+developer ergonomics
+clean production implementation
+
+This is not a toy demo. This must feel like a real commercial product with a modern, premium user experience and a serious backend/admin system.
+
+Core Objective
+
+Build a complete website/web app platform that combines:
+
+public marketing website
+SEO blog/content engine
+headless CMS and admin dashboard
+memberships and gated content
+user authentication and account management
+subscriptions and billing
+ecommerce/store capability
+advanced forms and lead capture
+media management
+search/filtering
+role-based admin system
+analytics-ready architecture
+production-ready backend and database foundation
+
+The application must be implemented as if it were going live for a real business.
+
+Product Definition
+
+Build a modern business platform with the following major areas:
+
+1. Public Website
+
+The public-facing site must include:
+
+Homepage
+About page
+Services / Products page
+Pricing page
+Blog index
+Blog category/tag pages
+Individual blog post pages
+Contact page
+FAQ page
+Legal pages:
+Privacy Policy
+Terms of Service
+Cookie Policy
+Search page
+404 page
+Custom success / thank-you pages for form submissions and checkout events
+
+The public website must be:
+
+modern
+premium
+responsive
+visually polished
+conversion-focused
+SEO-friendly
+accessible
+fast
+2. Membership / Account System
+
+Authenticated users must have access to:
+
+Sign up
+Log in
+Log out
+Forgot password
+Reset password
+Email verification
+Account dashboard
+Profile settings
+Change password
+Manage subscription
+View order history
+Access members-only content
+Save favorites/bookmarks
+Manage notification preferences
+View downloadable purchases/resources if applicable
+
+There must be clear separation between:
+
+guest users
+registered free users
+paid subscribers/members
+editors/admins/super admins
+3. Subscription and Billing
+
+Implement subscription-ready architecture supporting:
+
+Free plan
+At least one paid recurring subscription plan
+Monthly / yearly pricing structure
+Upgrade / downgrade path
+Cancel subscription
+Billing portal / billing management
+Payment success / failure handling
+Trial support architecture
+Webhook/event architecture for billing updates
+Subscription-based gated access
+
+This should be implemented in a way that mirrors how a real SaaS, education business, membership platform, or premium content site would operate.
+
+4. Store / Ecommerce Capability
+
+Include a commerce-capable section supporting:
+
+Product listing page
+Product detail pages
+Categories / tags / filters
+Cart
+Checkout architecture
+Order confirmation page
+Order history in user account
+Support for digital products and/or services
+Product status management in admin
+Inventory architecture if relevant
+Discounts / promo code architecture if relevant
+
+Even if not every advanced commerce feature is fully expanded, the system architecture must clearly support real-world ecommerce growth.
+
+5. Blog and SEO Content Engine
+
+This is a critical part of the product.
+
+Build a full blog/content system with:
+
+Blog index
+Category pages
+Tag pages
+Author pages if appropriate
+Individual article pages
+Featured images
+Rich text content support
+Draft / published / scheduled state support
+SEO title
+meta description
+canonical URL support
+Open Graph fields
+Twitter/X card fields
+slug management
+related posts
+reading time
+structured internal linking support
+sitemap-ready architecture
+robots-aware architecture
+RSS/feed-ready architecture if possible
+schema-ready content model
+search-friendly semantic HTML
+
+Blog architecture must be built as if content marketing and SEO are among the most important growth channels.
+
+6. Headless CMS / Admin Platform
+
+Build a robust admin/backend experience similar in spirit to WordPress as a serious publishing and business-management backend, but modernized and designed as a headless CMS/admin system.
+
+The admin/CMS must support management of:
+
+Content
+pages
+blog posts
+categories
+tags
+authors
+media assets
+SEO fields
+reusable content blocks/components
+navigation menus
+homepage sections
+footer content
+CTAs and promotional banners
+Commerce
+products
+pricing/plans
+orders
+customers
+discounts/promotions if implemented
+Membership
+users
+roles
+permissions
+subscriptions
+gated content rules
+Business Ops
+contact form submissions
+newsletter signups / leads
+support inquiries
+site settings
+branding settings
+redirects
+analytics integration settings
+social links
+legal page content
+CMS Requirements
+
+The CMS/admin must include:
+
+dashboard overview
+sortable/filterable tables
+create/edit/delete flows
+status workflows
+validation
+image upload/media library
+draft/publish workflow
+role-based access control
+audit-friendly architecture
+pagination
+search
+bulk actions where appropriate
+clean information architecture
+
+This should feel like a real modern backend, not a fake placeholder.
+
+7. Forms System
+
+Implement a production-capable forms architecture.
+
+Forms should include:
+
+contact form
+newsletter/signup form
+lead generation form
+checkout-related forms
+authentication forms
+account/profile forms
+admin content forms
+
+Requirements:
+
+strong validation
+client + server validation
+proper error states
+success states
+spam protection architecture
+rate-limit aware design
+accessible labels and messaging
+reusable form components
+clean UX for validation and submission states
+8. Search and Discovery
+
+Implement at least foundational search/discovery across the site:
+
+site search for blog/content/products/pages
+searchable admin tables
+filterable product/content views
+category and tag navigation
+future-ready architecture for advanced search integration
+9. Media / Asset Management
+
+Support:
+
+image upload
+media library
+alt text
+title/caption fields if appropriate
+responsive image handling
+lazy loading where appropriate
+optimized asset delivery
+image selection in CMS entries
+featured image support for blog/products/pages
+10. SEO and Discoverability
+
+This build must be engineered for strong technical SEO foundations.
+
+Requirements:
+
+semantic HTML
+page-specific metadata
+dynamic titles/meta descriptions
+canonical support
+Open Graph support
+Twitter/X card support
+JSON-LD/schema architecture
+sitemap generation support
+robots.txt support
+proper heading hierarchy
+crawlable navigation
+pagination-aware SEO if needed
+clean URL structure
+minimal layout shift
+fast initial rendering
+accessible structured content
+image alt text support
+server-side or static rendering strategy appropriate for the chosen stack
+
+Do not treat SEO as an afterthought.
+
+11. Accessibility
+
+The product must meet strong accessibility standards.
+
+Requirements:
+
+keyboard navigability
+visible focus states
+semantic landmarks
+proper labels
+accessible forms
+accessible navigation
+sufficient color contrast
+screen-reader-friendly patterns
+aria only where truly needed
+dialog/modals that trap focus properly if used
+accessible error and success messaging
+12. Performance
+
+Build with strong performance discipline.
+
+Requirements:
+
+optimized loading
+avoid unnecessary client-side JavaScript
+code splitting where relevant
+route-level optimization
+image optimization strategy
+caching-aware architecture
+avoid layout shift
+responsive asset loading
+clean bundle discipline
+production-minded rendering strategy
+
+The app should feel fast and deliberate, not bloated.
+
+13. Security
+
+Design with real-world security in mind.
+
+Requirements:
+
+secure auth architecture
+hashed passwords if applicable
+CSRF/XSS-aware design
+secure cookie/session handling
+authorization checks server-side
+role-based access control
+form validation server-side
+protected admin routes
+protected member routes
+secure file upload handling
+environment variable usage
+secrets not exposed client-side
+webhook verification for billing events where relevant
+basic rate-limiting strategy or future-ready hooks
+14. Analytics and Business Instrumentation
+
+Include architecture/hooks for:
+
+page view analytics
+form conversion tracking
+checkout/subscription events
+content performance events
+CTA click tracking
+future-ready integration points for analytics platforms
+
+You do not need to overbuild analytics dashboards unless the stack and time allow, but the codebase must clearly support instrumentation.
+
+15. Design and UX Standards
+
+The experience should feel:
+
+premium
+modern
+credible
+fast
+polished
+commercially viable
+
+Design expectations:
+
+responsive across mobile, tablet, laptop, desktop
+mobile-first approach
+elegant spacing and typography
+refined hover/focus/active states
+strong CTA hierarchy
+clean cards, sections, forms, and content layout
+polished navigation
+polished footer
+consistent component language
+professional dashboard/admin appearance
+no generic “template mess” feel
+
+This should feel like a serious product.
+
+Information Architecture
+
+At minimum, implement the following route/system structure.
+
+Public
+/
+/about
+/services or /products
+/pricing
+/blog
+/blog/[slug]
+/category/[slug]
+/tag/[slug]
+/search
+/contact
+/faq
+/privacy-policy
+/terms
+/cookies
+/cart
+/checkout
+/thank-you
+/404
+Auth / Member
+/login
+/register
+/forgot-password
+/reset-password
+/verify-email
+/account
+/account/profile
+/account/subscription
+/account/orders
+/account/favorites or saved
+/members or /library for gated content
+Admin / CMS
+/admin
+/admin/pages
+/admin/posts
+/admin/categories
+/admin/tags
+/admin/media
+/admin/users
+/admin/roles
+/admin/products
+/admin/orders
+/admin/subscriptions
+/admin/forms or leads
+/admin/navigation
+/admin/settings
+/admin/seo or equivalent site settings area
+Data Model Expectations
+
+Define a robust data model for at least the following entities:
+
+User
+Role
+Permission
+Session/Auth model as appropriate
+Subscription
+Plan
+Product
+Order
+OrderItem
+Page
+Post
+Category
+Tag
+Author/Profile
+MediaAsset
+NavigationMenu
+FormSubmission
+SiteSetting
+SEO/metadata fields structure
+NewsletterLead or ContactLead
+GatedContentRule if appropriate
+
+Use clean schema design with clear relationships and future scalability in mind.
+
+Required Engineering Outputs
+
+Your response must not be vague. Produce a full implementation package with the following:
+
+1. Architecture
+
+Explain:
+
+why the chosen stack is appropriate
+rendering strategy
+frontend/backend separation
+CMS architecture
+auth architecture
+billing architecture
+SEO strategy
+deployment strategy
+scaling considerations
+2. Project Structure
+
+Provide a real folder/file structure.
+
+3. Database Schema
+
+Provide the schema/models/entities.
+
+4. Route Map
+
+List public, auth, member, and admin routes.
+
+5. Feature Breakdown
+
+Map each major feature to the relevant modules/components/services.
+
+6. UI Component System
+
+Define the major reusable components for:
+
+layout
+navigation
+hero sections
+cards
+forms
+tables
+modals
+alerts
+pagination
+CMS editor UI
+dashboard widgets
+7. Implementation
+
+Build the actual code, not just a plan, for the core system.
+
+8. CMS/Admin
+
+Implement enough real admin functionality to prove that this is a usable backend/headless CMS, not just mocked screens.
+
+9. SEO
+
+Implement metadata handling, sitemap strategy, robots strategy, structured data hooks, and semantic content rendering.
+
+10. Auth and Access Control
+
+Implement protected routes, role separation, and access-aware rendering.
+
+11. Billing / Commerce
+
+Implement the architecture and realistic stubs/integration patterns for plans, payments, and orders.
+
+12. Forms
+
+Implement real validated forms with reusable patterns.
+
+13. Seed Data
+
+Provide meaningful seed/demo content:
+
+homepage content
+sample blog posts
+categories/tags
+products/plans
+example users/roles
+navigation
+settings
+14. Setup Instructions
+
+Provide exact local setup instructions and environment variable expectations.
+
+15. Production Readiness Notes
+
+List what is production-ready, what is scaffolded, and what should be hardened next.
+
+Non-Negotiable Quality Bar
+
+You must behave like a senior principal engineer with high standards.
+
+Requirements:
+
+no lazy placeholders unless clearly identified
+no shallow toy architecture
+no fake admin that cannot manage real data
+no fake SEO hand-waving
+no security blind spots
+no bloated unnecessary complexity
+no poor naming
+no broken responsive behavior
+no inaccessible UI patterns
+no inconsistent architecture
+no copy-paste junk code
+no unexplained decisions
+
+Everything should be:
+
+coherent
+scalable
+maintainable
+production-minded
+well-structured
+well-named
+realistic
+Decision Rules
+Build the same product scope every time.
+Adapt implementation details to the specified stack only.
+Do not reduce functionality because a stack is harder.
+If a framework has limitations, work around them professionally.
+Prefer battle-tested patterns.
+Keep frontend and backend boundaries clean.
+Treat CMS/admin as first-class, not secondary.
+Treat blog/SEO as first-class, not secondary.
+Treat memberships/subscriptions/store/forms as first-class, not secondary.
+Optimize for a real business deployment, not a tutorial.
+Output Format Required
+
+Return the work in this exact order:
+
+Executive architecture summary
+Recommended system design
+Folder structure
+Database/entities schema
+Route map
+Core reusable component list
+Public website implementation
+Auth/member implementation
+Store/subscription implementation
+Blog/SEO implementation
+Headless CMS/admin implementation
+Forms and validation implementation
+Search/discovery implementation
+Security/performance/accessibility notes
+Seed/demo data
+Local setup instructions
+Production deployment notes
+Full source code
+
+Do not stop at planning. Build the implementation.
+
+STACK TO USE
+
+Frontend: Vue
+Full-stack framework: Nuxt
+Backend: Nuxt server routes / Nitro server
+Database: PostgreSQL
+ORM / data layer: Prisma
+Auth: Auth.js-compatible Nuxt approach, Lucia, or custom secure session auth
+Payments: Stripe
+CMS/Admin approach: custom headless CMS/admin built inside the Nuxt app with dedicated admin routes, content models, media handling, and role-based access
+Styling: Tailwind CSS
+Forms/validation: VeeValidate + Zod
+Deployment target: Vercel, Netlify, or Node server
+Storage/media: S3 or equivalent object storage
+Email: Resend
+Search: PostgreSQL full-text search with abstraction for future Algolia/Meilisearch upgrade
+Analytics: PostHog or GA4-ready hooks

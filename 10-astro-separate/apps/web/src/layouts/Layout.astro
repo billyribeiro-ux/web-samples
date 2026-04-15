@@ -1,0 +1,32 @@
+---
+import "../styles/global.css";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import Seo from "../components/Seo.astro";
+
+type Props = {
+  title: string;
+  description?: string;
+  canonical?: string;
+  ogImage?: string;
+  jsonLd?: Record<string, unknown>;
+};
+
+const { title, description, canonical, ogImage, jsonLd } = Astro.props;
+---
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <Seo title={title} description={description} canonical={canonical} ogImage={ogImage} jsonLd={jsonLd} />
+  </head>
+  <body class="min-h-screen bg-white text-slate-900 antialiased">
+    <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-white focus:px-3 focus:py-2 focus:shadow">Skip to content</a>
+    <Header />
+    <main id="main" class="mx-auto max-w-6xl px-4 py-12">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

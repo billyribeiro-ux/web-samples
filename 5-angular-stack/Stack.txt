@@ -1,0 +1,17 @@
+Frontend: Angular
+Full-stack framework: Angular SSR / Angular full application architecture
+Backend: NestJS
+Database: PostgreSQL
+ORM / data layer: Prisma or TypeORM
+Auth: Auth0, Clerk, or custom secure session/JWT auth
+Payments: Stripe
+CMS/Admin approach: custom headless CMS/admin built as a full admin module in Angular backed by NestJS APIs with RBAC and structured content workflows
+Styling: Tailwind CSS or Angular Material with Tailwind utility layer
+Forms/validation: Angular Reactive Forms + Zod or class-validator on backend DTOs
+Deployment target: Vercel/Netlify for frontend SSR target or containerized Node deployment for full stack
+Storage/media: S3 or equivalent object storage
+Email: Resend
+Search: PostgreSQL full-text search with abstraction for future Algolia/Meilisearch upgrade
+Analytics: PostHog or GA4-ready hooks
+
+Best for testing: enterprise portals, structured business systems, admin-heavy products, long-lived internal/external platforms.

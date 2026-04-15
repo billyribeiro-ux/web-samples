@@ -1,0 +1,43 @@
+import { lucia } from '$lib/server/auth/lucia';
+import { loadAuthContext } from '$lib/server/auth/context';
+import type { Handle } from '@sveltejs/kit';
+
+export const handle: Handle = async ({ event, resolve }) => {
+	const sessionId = event.cookies.get(lucia.sessionCookieName);
+	if (!sessionId) {
+		event.locals.user = null;
+		event.locals.session = null;
+		event.locals.roles = [];
+		event.locals.permissions = new Set();
+		return resolve(event);
+	}
+
+	const { session, user } = await lucia.validateSession(sessionId);
+
+	if (session?.fresh) {
+		const sessionCookie = lucia.createSessionCookie(session.id);
+		event.cookies.set(sessionCookie.name, sessionCookie.value, {
+			path: '/',
+			...sessionCookie.attributes
+		});
+	}
+
+	if (!session) {
+		const blankCookie = lucia.createBlankSessionCookie();
+		event.cookies.set(blankCookie.name, blankCookie.value, { path: '/', ...blankCookie.attributes });
+	}
+
+	event.locals.session = session;
+	event.locals.user = user;
+
+	if (user) {
+		const ctx = await loadAuthContext(user.id);
+		event.locals.roles = ctx.roles;
+		event.locals.permissions = ctx.permissions;
+	} else {
+		event.locals.roles = [];
+		event.locals.permissions = new Set();
+	}
+
+	return resolve(event);
+};

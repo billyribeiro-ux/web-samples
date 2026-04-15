@@ -1,0 +1,17 @@
+Frontend: Vue
+Full-stack framework: None, use Vue SPA architecture
+Backend: Node.js + Express
+Database: PostgreSQL
+ORM / data layer: Prisma
+Auth: custom session/JWT auth or Clerk-compatible frontend integration
+Payments: Stripe
+CMS/Admin approach: custom headless CMS/admin built as a separate admin area in the Vue app backed by the Express API
+Styling: Tailwind CSS
+Forms/validation: VeeValidate + Zod
+Deployment target: Vercel/Netlify for frontend, Railway/Render/Fly.io or equivalent for backend
+Storage/media: S3 or equivalent object storage
+Email: Resend
+Search: PostgreSQL full-text search with abstraction for future Algolia/Meilisearch upgrade
+Analytics: PostHog or GA4-ready hooks
+
+Best for testing: clean frontend UI systems, dashboards, custom interfaces, separate frontend/backend architecture.

@@ -1,0 +1,15 @@
+---
+import AdminLayout from '@/layouts/AdminLayout.astro';
+import { prisma } from '@/lib/prisma';
+
+const tags = await prisma.tag.findMany({ orderBy: { name: 'asc' } });
+---
+
+<AdminLayout>
+  <h1 class="text-2xl font-semibold text-white">Tags</h1>
+  <ul class="mt-6 flex flex-wrap gap-2 text-sm">
+    {tags.map((t) => (
+      <li class="rounded-full border border-slate-700 px-3 py-1 text-slate-300">{t.name}</li>
+    ))}
+  </ul>
+</AdminLayout>

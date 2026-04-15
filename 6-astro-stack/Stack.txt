@@ -1,0 +1,17 @@
+Frontend: Astro with islands architecture
+Full-stack framework: Astro
+Backend: Astro server endpoints/actions or integrated Node backend layer
+Database: PostgreSQL
+ORM / data layer: Prisma or Drizzle
+Auth: production-grade Astro-compatible auth solution with secure sessions
+Payments: Stripe
+CMS/Admin approach: custom headless CMS/admin integrated into Astro or mounted as a dedicated admin application sharing the same backend/data layer
+Styling: Tailwind CSS
+Forms/validation: schema-based validation with Zod and server-side validation patterns
+Deployment target: Vercel, Netlify, or Node server
+Storage/media: S3 or equivalent object storage
+Email: Resend
+Search: PostgreSQL/content search abstraction with future Algolia/Meilisearch compatibility
+Analytics: PostHog or GA4-ready hooks
+
+Best for testing: blog-first, SEO-first, content-heavy, fast marketing and authority sites that still need memberships, forms, subscriptions, and light commerce.

@@ -1,0 +1,47 @@
+---
+import { absoluteUrl } from '@/lib/site';
+
+interface Props {
+  type: 'organization' | 'article' | 'product';
+  title?: string;
+  description?: string;
+  datePublished?: string;
+  price?: number;
+  currency?: string;
+}
+
+const { type, title, description, datePublished, price, currency = 'USD' } = Astro.props;
+
+const org = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'Astro Business',
+  url: absoluteUrl('/'),
+};
+
+let data: Record<string, unknown> = org;
+if (type === 'article' && title) {
+  data = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: title,
+    description,
+    datePublished,
+  };
+}
+if (type === 'product' && title && price != null) {
+  data = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: title,
+    description,
+    offers: {
+      '@type': 'Offer',
+      price,
+      priceCurrency: currency,
+    },
+  };
+}
+---
+
+<script is:inline type="application/ld+json" set:html={JSON.stringify(data)} />

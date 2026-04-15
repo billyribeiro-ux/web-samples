@@ -1,0 +1,25 @@
+---
+type Props = {
+  title: string;
+  description?: string;
+  canonical?: string;
+  ogImage?: string;
+  jsonLd?: Record<string, unknown>;
+};
+
+const { title, description, canonical, ogImage, jsonLd } = Astro.props;
+const site = import.meta.env.PUBLIC_SITE_URL ?? Astro.url.origin;
+const url = canonical ?? new URL(Astro.url.pathname, site).toString();
+---
+<title>{title}</title>
+<meta name="description" content={description ?? ""} />
+<link rel="canonical" href={url} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description ?? ""} />
+<meta property="og:url" content={url} />
+<meta property="og:type" content="website" />
+{ogImage && <meta property="og:image" content={ogImage} />}
+<meta name="twitter:card" content="summary_large_image" />
+{jsonLd && (
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+)}

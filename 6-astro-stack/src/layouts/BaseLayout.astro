@@ -1,0 +1,77 @@
+---
+import '@/styles/global.css';
+
+import SiteFooter from '@/components/layout/SiteFooter.astro';
+import SiteHeader from '@/components/layout/SiteHeader.astro';
+import JsonLd from '@/components/system/JsonLd.astro';
+import { getMainNav } from '@/lib/nav';
+import { absoluteUrl } from '@/lib/site';
+
+interface Props {
+  title: string;
+  description?: string;
+  canonicalPath?: string;
+  ogImage?: string;
+  noindex?: boolean;
+  jsonLd?: 'organization' | 'article' | 'product';
+  jsonLdArticle?: { title: string; description?: string; datePublished?: string };
+  jsonLdProduct?: { title: string; description?: string; price: number; currency?: string };
+}
+
+const {
+  title,
+  description = 'Premium marketing, content, memberships, and commerce on Astro 6.',
+  canonicalPath,
+  ogImage,
+  noindex = false,
+  jsonLd = 'organization',
+  jsonLdArticle,
+  jsonLdProduct,
+} = Astro.props;
+
+const nav = await getMainNav();
+const canonical = absoluteUrl(canonicalPath ?? Astro.url.pathname);
+const og = ogImage ?? absoluteUrl('/favicon.svg');
+---
+
+<!doctype html>
+<html lang="en" class="bg-slate-950 text-slate-100">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex,nofollow" />}
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content={og} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  </head>
+  <body class="min-h-screen antialiased">
+    <SiteHeader nav={nav} />
+    <main id="main">
+      <slot />
+    </main>
+    <SiteFooter />
+    {jsonLd === 'organization' && <JsonLd type="organization" />}
+    {jsonLd === 'article' && jsonLdArticle && (
+      <JsonLd type="article" title={jsonLdArticle.title} description={jsonLdArticle.description} datePublished={jsonLdArticle.datePublished} />
+    )}
+    {jsonLd === 'product' && jsonLdProduct && (
+      <JsonLd
+        type="product"
+        title={jsonLdProduct.title}
+        description={jsonLdProduct.description}
+        price={jsonLdProduct.price}
+        currency={jsonLdProduct.currency}
+      />
+    )}
+  </body>
+</html>

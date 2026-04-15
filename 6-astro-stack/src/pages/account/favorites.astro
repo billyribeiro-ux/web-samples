@@ -1,0 +1,25 @@
+---
+import AccountLayout from '@/layouts/AccountLayout.astro';
+import { prisma } from '@/lib/prisma';
+
+const user = Astro.locals.user;
+if (!user) throw new Error('unreachable');
+
+const favs = await prisma.favorite.findMany({
+  where: { userId: user.id },
+  include: { product: true },
+});
+---
+
+<AccountLayout title="Favorites">
+  {favs.length === 0 && <p class="text-slate-400">Save products from the catalog to see them here.</p>}
+  <ul class="space-y-2">
+    {favs.map((f) => (
+      <li>
+        <a href={`/products/${f.product.slug}`} class="text-emerald-400 hover:underline">
+          {f.product.name}
+        </a>
+      </li>
+    ))}
+  </ul>
+</AccountLayout>

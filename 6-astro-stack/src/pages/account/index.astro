@@ -1,0 +1,15 @@
+---
+import AccountLayout from '@/layouts/AccountLayout.astro';
+
+const user = Astro.locals.user;
+if (!user) throw new Error('middleware should redirect');
+---
+
+<AccountLayout title="Overview">
+  <p class="text-slate-400">
+    Signed in as <span class="text-white">{user.email}</span>
+  </p>
+  <p class="mt-4 text-sm text-slate-500">
+    Roles: {Astro.locals.roles.join(', ') || 'user'}
+  </p>
+</AccountLayout>

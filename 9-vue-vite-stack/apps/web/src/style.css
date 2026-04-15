@@ -1,0 +1,38 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --color-brand-950: #0b1220;
+  --color-brand-900: #111a2e;
+  --color-brand-800: #1a2744;
+  --color-brand-700: #243556;
+  --color-brand-600: #2f4468;
+  --color-accent-500: #38bdf8;
+  --color-accent-400: #7dd3fc;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-brand-950 text-slate-100 antialiased font-sans;
+}
+
+.skip-link {
+  @apply sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-white focus:px-3 focus:py-2 focus:text-brand-950;
+}
+
+.prose-site {
+  @apply max-w-none text-slate-200 leading-relaxed;
+}
+
+.prose-site h1,
+.prose-site h2,
+.prose-site h3 {
+  @apply font-semibold text-white;
+}
+
+.prose-site a {
+  @apply text-accent-400 underline-offset-2 hover:underline;
+}

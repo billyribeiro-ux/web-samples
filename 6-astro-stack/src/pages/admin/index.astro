@@ -1,0 +1,28 @@
+---
+import AdminLayout from '@/layouts/AdminLayout.astro';
+import { prisma } from '@/lib/prisma';
+
+const [posts, orders, leads] = await Promise.all([
+  prisma.post.count(),
+  prisma.order.count(),
+  prisma.formSubmission.count(),
+]);
+---
+
+<AdminLayout>
+  <h1 class="text-2xl font-semibold text-white">Dashboard</h1>
+  <div class="mt-8 grid gap-4 sm:grid-cols-3">
+    <div class="rounded-xl border border-slate-800 bg-slate-900/50 p-6">
+      <p class="text-sm text-slate-500">Posts</p>
+      <p class="mt-2 text-3xl font-bold text-white">{posts}</p>
+    </div>
+    <div class="rounded-xl border border-slate-800 bg-slate-900/50 p-6">
+      <p class="text-sm text-slate-500">Orders</p>
+      <p class="mt-2 text-3xl font-bold text-white">{orders}</p>
+    </div>
+    <div class="rounded-xl border border-slate-800 bg-slate-900/50 p-6">
+      <p class="text-sm text-slate-500">Form leads</p>
+      <p class="mt-2 text-3xl font-bold text-white">{leads}</p>
+    </div>
+  </div>
+</AdminLayout>

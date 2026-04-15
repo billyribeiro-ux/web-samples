@@ -1,0 +1,46 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { apiUrl } from "../lib/api";
+
+const regUrl = apiUrl("/v1/auth/register");
+---
+<Layout title="Create account" description="Register">
+  <h1 class="text-3xl font-semibold">Create account</h1>
+  <form id="reg-form" class="mt-8 max-w-md space-y-4">
+    <div>
+      <label class="block text-sm font-medium" for="name">Name</label>
+      <input class="mt-1 w-full rounded-md border px-3 py-2 text-sm" id="name" />
+    </div>
+    <div>
+      <label class="block text-sm font-medium" for="email">Email</label>
+      <input class="mt-1 w-full rounded-md border px-3 py-2 text-sm" id="email" type="email" required />
+    </div>
+    <div>
+      <label class="block text-sm font-medium" for="password">Password</label>
+      <input class="mt-1 w-full rounded-md border px-3 py-2 text-sm" id="password" type="password" minlength="8" required />
+    </div>
+    <p id="rg-status" class="text-sm text-slate-600" />
+    <button class="rounded-md bg-accent px-4 py-2 text-sm font-semibold text-white" type="submit">Register</button>
+  </form>
+  <script define:vars={{ regUrl }}>
+    document.getElementById("reg-form")?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const status = document.getElementById("rg-status");
+      const name = (document.getElementById("name") as HTMLInputElement).value;
+      const email = (document.getElementById("email") as HTMLInputElement).value;
+      const password = (document.getElementById("password") as HTMLInputElement).value;
+      status.textContent = "Creating account…";
+      const res = await fetch(regUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password, name: name || undefined }),
+      });
+      if (res.ok) {
+        status.textContent = "Account created. Check your email to verify, then sign in.";
+      } else {
+        const j = await res.json().catch(() => ({}));
+        status.textContent = j?.error?.message ?? "Could not register.";
+      }
+    });
+  </script>
+</Layout>

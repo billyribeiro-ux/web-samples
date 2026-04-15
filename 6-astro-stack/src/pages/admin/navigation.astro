@@ -1,0 +1,24 @@
+---
+import AdminLayout from '@/layouts/AdminLayout.astro';
+import { prisma } from '@/lib/prisma';
+
+const menus = await prisma.navigationMenu.findMany({
+  include: { items: { orderBy: { sortOrder: 'asc' } } },
+});
+---
+
+<AdminLayout>
+  <h1 class="text-2xl font-semibold text-white">Navigation</h1>
+  {menus.map((m) => (
+    <div class="mt-8">
+      <h2 class="text-lg text-white">{m.name}</h2>
+      <ul class="mt-2 space-y-1 text-sm text-slate-400">
+        {m.items.map((i) => (
+          <li>
+            {i.label} → {i.href}
+          </li>
+        ))}
+      </ul>
+    </div>
+  ))}
+</AdminLayout>

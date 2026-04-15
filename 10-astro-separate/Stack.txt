@@ -1,0 +1,17 @@
+Frontend: Astro
+Full-stack framework: Astro for public site, dedicated admin app for CMS
+Backend: Node.js backend shared between Astro frontend and admin application
+Database: PostgreSQL
+ORM / data layer: Prisma or Drizzle
+Auth: custom secure auth with session handling across admin/member flows
+Payments: Stripe
+CMS/Admin approach: dedicated headless CMS/admin app sharing backend/data layer, WordPress-like in capability but custom-built
+Styling: Tailwind CSS
+Forms/validation: Zod-based validation and server-side validation
+Deployment target: Vercel/Node
+Storage/media: S3 or equivalent object storage
+Email: Resend
+Search: PostgreSQL/content search abstraction with future Algolia/Meilisearch compatibility
+Analytics: PostHog or GA4-ready hooks
+
+Best for testing: whether Astro performs best when the public SEO/content layer is separated from the heavier admin/business logic.

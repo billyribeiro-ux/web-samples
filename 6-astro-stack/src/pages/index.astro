@@ -1,0 +1,42 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Astro Business — modern platform for growth">
+  <section class="mx-auto max-w-6xl px-4 py-20 md:py-28">
+    <p class="text-sm font-medium uppercase tracking-widest text-emerald-400/90">Principal-grade stack</p>
+    <h1 class="mt-4 max-w-3xl text-4xl font-semibold tracking-tight text-white md:text-5xl">
+      Ship a credible marketing site, SEO blog, memberships, and light commerce — without the template mess.
+    </h1>
+    <p class="mt-6 max-w-2xl text-lg text-slate-400">
+      Astro 6 SSR, PostgreSQL, Prisma, Better Auth, Stripe, and a real admin CMS — structured for production.
+    </p>
+    <div class="mt-10 flex flex-wrap gap-4">
+      <a
+        href="/pricing"
+        class="rounded-lg bg-emerald-500 px-5 py-3 text-sm font-semibold text-slate-950 hover:bg-emerald-400"
+      >
+        View pricing
+      </a>
+      <a href="/blog" class="rounded-lg border border-slate-700 px-5 py-3 text-sm font-semibold text-white hover:border-slate-500">
+        Read the blog
+      </a>
+    </div>
+  </section>
+  <section class="border-t border-slate-800/80 bg-slate-900/40 py-16">
+    <div class="mx-auto grid max-w-6xl gap-10 px-4 md:grid-cols-3">
+      <div>
+        <h2 class="text-lg font-semibold text-white">SEO-first content</h2>
+        <p class="mt-2 text-sm text-slate-400">Posts, categories, tags, RSS, sitemap, and JSON-LD hooks.</p>
+      </div>
+      <div>
+        <h2 class="text-lg font-semibold text-white">Membership-ready</h2>
+        <p class="mt-2 text-sm text-slate-400">Roles, gated routes, Stripe subscriptions, and billing portal stubs.</p>
+      </div>
+      <div>
+        <h2 class="text-lg font-semibold text-white">Operator dashboard</h2>
+        <p class="mt-2 text-sm text-slate-400">Manage content, catalog, leads, and settings from `/admin`.</p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

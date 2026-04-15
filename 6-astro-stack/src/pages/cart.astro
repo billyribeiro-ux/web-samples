@@ -1,0 +1,36 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getOrCreateCartCookie } from '@/lib/cart';
+
+const userId = Astro.locals.user?.id ?? null;
+const withItems = await getOrCreateCartCookie(Astro.cookies, userId);
+
+const total =
+  withItems?.items.reduce((sum, i) => sum + i.product.price * i.quantity, 0) ?? 0;
+---
+
+<BaseLayout title="Cart" noindex={true}>
+  <div class="mx-auto max-w-3xl px-4 py-16">
+    <h1 class="text-3xl font-semibold text-white">Cart</h1>
+    {!withItems?.items.length && <p class="mt-6 text-slate-400">Your cart is empty.</p>}
+    <ul class="mt-8 divide-y divide-slate-800">
+      {withItems?.items.map((line) => (
+        <li class="flex justify-between py-4 text-sm">
+          <span class="text-white">{line.product.name}</span>
+          <span class="text-slate-400">
+            ×{line.quantity} · ${((line.product.price * line.quantity) / 100).toFixed(2)}
+          </span>
+        </li>
+      ))}
+    </ul>
+    {withItems && withItems.items.length > 0 && (
+      <div class="mt-8 flex items-center justify-between border-t border-slate-800 pt-6">
+        <p class="text-lg font-semibold text-white">Total</p>
+        <p class="text-lg font-semibold text-white">${(total / 100).toFixed(2)}</p>
+      </div>
+    )}
+    <p class="mt-6 text-sm text-slate-500">
+      Checkout uses Stripe Checkout sessions from product pages — extend this route to create a multi-item Checkout session.
+    </p>
+  </div>
+</BaseLayout>

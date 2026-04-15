@@ -1,0 +1,37 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { prisma } from '@/lib/prisma';
+
+const { slug } = Astro.params;
+if (!slug) throw new Error('slug');
+
+const category = await prisma.category.findUnique({
+  where: { slug },
+  include: {
+    posts: {
+      include: { post: true },
+    },
+  },
+});
+
+if (!category) {
+  return Astro.redirect('/404');
+}
+
+const posts = category.posts.map((pc) => pc.post).filter((p) => p.status === 'PUBLISHED');
+---
+
+<BaseLayout title={`${category.name} — Blog`}>
+  <div class="mx-auto max-w-3xl px-4 py-16">
+    <h1 class="text-3xl font-semibold text-white">Category: {category.name}</h1>
+    <ul class="mt-8 space-y-6">
+      {posts.map((p) => (
+        <li>
+          <a href={`/blog/${p.slug}`} class="text-lg font-medium text-white hover:text-emerald-400">
+            {p.title}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</BaseLayout>

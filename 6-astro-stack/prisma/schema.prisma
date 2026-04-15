@@ -1,0 +1,533 @@
+// Prisma schema — Astro business platform (Better Auth + CMS + commerce)
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ——— Better Auth (table names per Better Auth core schema) ———
+
+model User {
+  id            String    @id
+  name          String
+  email         String    @unique
+  emailVerified Boolean
+  image         String?
+  createdAt     DateTime
+  updatedAt     DateTime
+
+  sessions Session[]
+  accounts Account[]
+
+  userRoles         UserRole[]
+  profile           Profile?
+  orders            Order[]
+  subscriptions     Subscription[]
+  favorites         Favorite[]
+  carts             Cart[]
+  mediaAssets       MediaAsset[] @relation("UploadedBy")
+  auditLogs         AuditLog[]
+
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime
+  updatedAt DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  userId                String
+  accountId             String
+  providerId            String
+  accessToken           String?
+  refreshToken          String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  idToken               String?
+  password              String?
+  createdAt             DateTime
+  updatedAt             DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime
+  updatedAt  DateTime
+
+  @@map("verification")
+}
+
+model RateLimit {
+  key         String @id
+  count       Int
+  lastRequest BigInt
+
+  @@map("rateLimit")
+}
+
+// ——— RBAC ———
+
+model Role {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userRoles       UserRole[]
+  rolePermissions RolePermission[]
+  gatedRules      GatedContentRule[]
+}
+
+model Permission {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  name      String
+  createdAt DateTime @default(now())
+
+  rolePermissions RolePermission[]
+}
+
+model RolePermission {
+  roleId       String
+  permissionId String
+
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+}
+
+model UserRole {
+  userId String
+  roleId String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@id([userId, roleId])
+}
+
+model Profile {
+  userId           String  @id
+  stripeCustomerId String?
+  emailMarketing   Boolean @default(true)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ——— Subscriptions & plans ———
+
+model Plan {
+  id                   String   @id @default(cuid())
+  slug                 String   @unique
+  name                 String
+  description          String?  @db.Text
+  stripePriceMonthlyId String?
+  stripePriceYearlyId  String?
+  amountMonthly        Int?
+  amountYearly         Int?
+  currency             String   @default("usd")
+  isPublic             Boolean  @default(true)
+  sortOrder            Int      @default(0)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  subscriptions Subscription[]
+  gatedRules    GatedContentRule[]
+}
+
+model Subscription {
+  id                   String             @id @default(cuid())
+  userId               String
+  planId               String
+  stripeSubscriptionId String?            @unique
+  stripeCustomerId     String?
+  status               SubscriptionStatus
+  currentPeriodEnd     DateTime?
+  cancelAtPeriodEnd    Boolean            @default(false)
+  trialEnd             DateTime?
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plan Plan @relation(fields: [planId], references: [id], onDelete: Restrict)
+
+  @@index([userId])
+}
+
+enum SubscriptionStatus {
+  INCOMPLETE
+  ACTIVE
+  PAST_DUE
+  CANCELED
+  TRIALING
+  UNPAID
+}
+
+// ——— Commerce ———
+
+model ProductCategory {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  description String?  @db.Text
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+
+  products Product[]
+}
+
+model Product {
+  id            String      @id @default(cuid())
+  slug          String      @unique
+  name          String
+  description   String      @db.Text
+  price         Int
+  currency      String      @default("usd")
+  stripePriceId String?
+  type          ProductType @default(DIGITAL)
+  inventory     Int?
+  isActive      Boolean     @default(true)
+  featured      Boolean     @default(false)
+  categoryId    String?
+  mediaId       String?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  category   ProductCategory? @relation(fields: [categoryId], references: [id])
+  featuredMedia MediaAsset?   @relation("ProductFeatured", fields: [mediaId], references: [id])
+  orderItems OrderItem[]
+  favorites  Favorite[]
+  cartItems  CartItem[]
+}
+
+enum ProductType {
+  DIGITAL
+  PHYSICAL
+  SERVICE
+}
+
+model Cart {
+  id        String   @id @default(cuid())
+  userId    String?
+  sessionKey String? @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user  User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items CartItem[]
+}
+
+model CartItem {
+  id        String @id @default(cuid())
+  cartId    String
+  productId String
+  quantity  Int    @default(1)
+
+  cart    Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([cartId, productId])
+}
+
+model Order {
+  id                    String      @id @default(cuid())
+  userId                String?
+  email                 String
+  status                OrderStatus @default(PENDING)
+  currency              String      @default("usd")
+  total                 Int
+  stripePaymentIntentId String?
+  stripeCheckoutSessionId String?   @unique
+  metadata              Json?
+  createdAt             DateTime    @default(now())
+  updatedAt             DateTime    @updatedAt
+
+  user  User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+  items OrderItem[]
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  FULFILLED
+  CANCELED
+  REFUNDED
+}
+
+model OrderItem {
+  id        String @id @default(cuid())
+  orderId   String
+  productId String
+  quantity  Int
+  unitPrice Int
+
+  order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Restrict)
+}
+
+model Discount {
+  id         String    @id @default(cuid())
+  code       String    @unique
+  percentOff Int?
+  amountOff  Int?
+  active     Boolean   @default(true)
+  validUntil DateTime?
+  createdAt  DateTime  @default(now())
+}
+
+model Favorite {
+  userId    String
+  productId String
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@id([userId, productId])
+}
+
+// ——— CMS ———
+
+model Author {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  name      String
+  bio       String?  @db.Text
+  avatarId  String?
+  createdAt DateTime @default(now())
+
+  avatar MediaAsset? @relation(fields: [avatarId], references: [id])
+  posts  Post[]
+}
+
+model Category {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  description String?  @db.Text
+  createdAt   DateTime @default(now())
+
+  posts PostCategory[]
+}
+
+model Tag {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  name      String
+  createdAt DateTime @default(now())
+
+  posts PostTag[]
+}
+
+model Post {
+  id              String     @id @default(cuid())
+  slug            String     @unique
+  title           String
+  excerpt         String?    @db.Text
+  body            String     @db.Text
+  status          PostStatus @default(DRAFT)
+  publishedAt     DateTime?
+  scheduledFor    DateTime?
+  readingMinutes  Int        @default(0)
+  authorId        String?
+  featuredMediaId String?
+  seoTitle        String?
+  seoDescription  String?    @db.Text
+  canonicalUrl    String?
+  ogImageUrl      String?
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  author        Author?   @relation(fields: [authorId], references: [id])
+  featuredMedia MediaAsset? @relation("PostFeatured", fields: [featuredMediaId], references: [id])
+  categories    PostCategory[]
+  tags          PostTag[]
+}
+
+enum PostStatus {
+  DRAFT
+  PUBLISHED
+  SCHEDULED
+}
+
+model PostCategory {
+  postId     String
+  categoryId String
+
+  post     Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@id([postId, categoryId])
+}
+
+model PostTag {
+  postId String
+  tagId  String
+
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  tag  Tag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([postId, tagId])
+}
+
+model Page {
+  id             String     @id @default(cuid())
+  slug           String     @unique
+  title          String
+  body           String     @db.Text
+  status         PostStatus @default(DRAFT)
+  seoTitle       String?
+  seoDescription String?    @db.Text
+  canonicalUrl   String?
+  ogImageUrl     String?
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+}
+
+model MediaAsset {
+  id          String   @id @default(cuid())
+  url         String
+  storageKey  String   @unique
+  bucket      String
+  mimeType    String
+  sizeBytes   Int
+  width       Int?
+  height      Int?
+  alt         String?
+  title       String?
+  caption     String?
+  uploadedById String?
+  createdAt   DateTime @default(now())
+
+  uploadedBy User? @relation("UploadedBy", fields: [uploadedById], references: [id], onDelete: SetNull)
+
+  postsFeatured    Post[]    @relation("PostFeatured")
+  productsFeatured Product[] @relation("ProductFeatured")
+  authorsAvatar    Author[]
+}
+
+model NavigationMenu {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  name      String
+  createdAt DateTime @default(now())
+
+  items NavigationItem[]
+}
+
+model NavigationItem {
+  id        String   @id @default(cuid())
+  menuId    String
+  parentId  String?
+  label     String
+  href      String
+  sortOrder Int      @default(0)
+
+  menu   NavigationMenu   @relation(fields: [menuId], references: [id], onDelete: Cascade)
+  parent NavigationItem?  @relation("NavChildren", fields: [parentId], references: [id], onDelete: Cascade)
+  children NavigationItem[] @relation("NavChildren")
+
+  @@index([menuId])
+}
+
+model SiteSetting {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @updatedAt
+}
+
+model Redirect {
+  id        String   @id @default(cuid())
+  fromPath  String   @unique
+  toPath    String
+  permanent Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
+
+model GatedContentRule {
+  id           String         @id @default(cuid())
+  resourceType GatedResource
+  resourceId   String
+  planId       String?
+  roleId       String?
+
+  plan Plan? @relation(fields: [planId], references: [id], onDelete: Cascade)
+  role Role? @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@index([resourceType, resourceId])
+}
+
+enum GatedResource {
+  POST
+  PAGE
+  PRODUCT
+}
+
+// ——— Leads & forms ———
+
+model FormSubmission {
+  id        String   @id @default(cuid())
+  formType  String
+  payload   Json
+  ip        String?
+  userAgent String?
+  createdAt DateTime @default(now())
+}
+
+model NewsletterLead {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  source    String?
+  createdAt DateTime @default(now())
+}
+
+// ——— Ops ———
+
+model StripeEvent {
+  id          String   @id
+  type        String
+  processed   Boolean  @default(false)
+  receivedAt  DateTime @default(now())
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  userId     String?
+  action     String
+  entityType String
+  entityId   String?
+  metadata   Json?
+  createdAt  DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([entityType, entityId])
+}

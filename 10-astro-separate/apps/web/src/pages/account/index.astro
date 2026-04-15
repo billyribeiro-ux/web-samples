@@ -1,0 +1,35 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { apiServerFetch } from "../../lib/api";
+
+const res = await apiServerFetch(Astro.request, "/v1/account/me");
+if (res.status === 401) {
+  return Astro.redirect("/login");
+}
+const { user } = (await res.json()) as {
+  user: { email: string; name: string | null; subscriptions: { plan: { name: string }; status: string }[] };
+};
+---
+<Layout title="Account" description="Your account dashboard">
+  <h1 class="text-3xl font-semibold">Account</h1>
+  <p class="mt-2 text-slate-600">
+    Signed in as <strong>{user.email}</strong>
+    {user.name && ` (${user.name})`}
+  </p>
+  <div class="mt-8 grid gap-4 md:grid-cols-2">
+    <a class="rounded-xl border border-slate-200 p-4 hover:border-accent" href="/account/profile">Profile</a>
+    <a class="rounded-xl border border-slate-200 p-4 hover:border-accent" href="/account/subscription">Subscription</a>
+    <a class="rounded-xl border border-slate-200 p-4 hover:border-accent" href="/account/orders">Orders</a>
+    <a class="rounded-xl border border-slate-200 p-4 hover:border-accent" href="/account/favorites">Favorites</a>
+  </div>
+  <section class="mt-10">
+    <h2 class="text-lg font-semibold">Subscriptions</h2>
+    <ul class="mt-2 text-sm text-slate-600">
+      {user.subscriptions.map((s) => (
+        <li>
+          {s.plan.name}: {s.status}
+        </li>
+      ))}
+    </ul>
+  </section>
+</Layout>

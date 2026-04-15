@@ -1,0 +1,18 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { apiServerFetch } from "../../lib/api";
+
+const res = await apiServerFetch(Astro.request, "/v1/account/me");
+if (res.status === 401) return Astro.redirect("/login");
+const { user } = (await res.json()) as { user: { subscriptions: { plan: { name: string }; status: string }[] } };
+---
+<Layout title="Subscription" description="Manage subscription">
+  <h1 class="text-2xl font-semibold">Subscription</h1>
+  <ul class="mt-4 text-sm text-slate-600">
+    {user.subscriptions.map((s) => (
+      <li>
+        {s.plan.name} — {s.status}
+      </li>
+    ))}
+  </ul>
+</Layout>

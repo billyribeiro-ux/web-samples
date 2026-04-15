@@ -1,0 +1,489 @@
+// https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ——— Auth.js (@auth/prisma-adapter) + credentials ———
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts Account[]
+  sessions Session[]
+
+  roles         UserRole[]
+  posts         Post[]       @relation("PostAuthorUser")
+  subscriptions Subscription[]
+  orders        Order[]
+  favoritesPost UserFavoritePost[]
+  favoritesProduct UserFavoriteProduct[]
+  settings      UserSettings?
+  auditLogs     AuditLog[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  email     String
+  tokenHash String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([email])
+}
+
+// ——— RBAC ———
+
+model Role {
+  id          String           @id @default(cuid())
+  key         String           @unique
+  name        String
+  description String?
+  userRoles   UserRole[]
+  permissions RolePermission[]
+}
+
+model Permission {
+  id          String           @id @default(cuid())
+  key         String           @unique
+  description String?
+  roles       RolePermission[]
+}
+
+model RolePermission {
+  roleId       String
+  permissionId String
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+}
+
+model UserRole {
+  userId String
+  roleId String
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role   Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@id([userId, roleId])
+}
+
+// ——— Content ———
+
+enum ContentStatus {
+  DRAFT
+  SCHEDULED
+  PUBLISHED
+  ARCHIVED
+}
+
+model Page {
+  id              String        @id @default(cuid())
+  slug            String        @unique
+  title           String
+  excerpt         String?       @db.Text
+  bodyHtml        String        @db.Text
+  status          ContentStatus @default(DRAFT)
+  publishedAt     DateTime?
+  scheduledFor    DateTime?
+  seoTitle        String?
+  seoDescription  String?       @db.Text
+  canonicalUrl    String?
+  ogImageId       String?
+  twitterImageId  String?
+  ogTitle         String?
+  ogDescription   String?       @db.Text
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  ogImage      MediaAsset? @relation("PageOgImage", fields: [ogImageId], references: [id])
+  twitterImage MediaAsset? @relation("PageTwitterImage", fields: [twitterImageId], references: [id])
+}
+
+model Author {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  name      String
+  bio       String?  @db.Text
+  avatarId  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  avatar MediaAsset? @relation(fields: [avatarId], references: [id])
+  posts  Post[]
+}
+
+model Category {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  description String?  @db.Text
+  posts       Post[]
+}
+
+model Tag {
+  id    String    @id @default(cuid())
+  slug  String    @unique
+  name  String
+  posts PostTag[]
+}
+
+model Post {
+  id              String        @id @default(cuid())
+  slug            String        @unique
+  title           String
+  excerpt         String?       @db.Text
+  bodyHtml        String        @db.Text
+  status          ContentStatus @default(DRAFT)
+  publishedAt     DateTime?
+  scheduledFor    DateTime?
+  readingMinutes  Int           @default(5)
+  featuredImageId String?
+  categoryId      String?
+  authorId        String?
+  authorUserId    String?
+
+  seoTitle       String?
+  seoDescription String? @db.Text
+  canonicalUrl   String?
+  ogImageId      String?
+  twitterImageId String?
+  ogTitle        String?
+  ogDescription  String? @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  category       Category? @relation(fields: [categoryId], references: [id])
+  authorProfile  Author?   @relation(fields: [authorId], references: [id])
+  authorUser     User?     @relation("PostAuthorUser", fields: [authorUserId], references: [id])
+  featuredImage  MediaAsset? @relation("PostFeatured", fields: [featuredImageId], references: [id])
+  ogImage        MediaAsset? @relation("PostOg", fields: [ogImageId], references: [id])
+  twitterImage   MediaAsset? @relation("PostTwitter", fields: [twitterImageId], references: [id])
+  tags           PostTag[]
+  favorites      UserFavoritePost[]
+}
+
+model PostTag {
+  postId String
+  tagId  String
+  post   Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  tag    Tag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([postId, tagId])
+}
+
+model MediaAsset {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  url       String
+  mimeType  String
+  sizeBytes Int
+  width     Int?
+  height    Int?
+  alt       String?
+  title     String?
+  caption   String?  @db.Text
+  createdAt DateTime @default(now())
+
+  postsFeatured Post[] @relation("PostFeatured")
+  postsOg       Post[] @relation("PostOg")
+  postsTwitter  Post[] @relation("PostTwitter")
+  pagesOg       Page[] @relation("PageOgImage")
+  pagesTwitter  Page[] @relation("PageTwitterImage")
+  authors       Author[]
+  products      Product[]
+}
+
+model NavigationMenu {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  label     String
+  itemsJson String   @db.Text
+  updatedAt DateTime @updatedAt
+}
+
+model SiteSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  valueJson String   @db.Text
+  updatedAt DateTime @updatedAt
+}
+
+// ——— Gated content ———
+
+enum GatedTargetType {
+  ROUTE
+  PAGE
+  POST
+}
+
+model GatedContentRule {
+  id                      String            @id @default(cuid())
+  targetType              GatedTargetType
+  routePath               String?
+  pageSlug                String?
+  postSlug                String?
+  requireActiveSubscription Boolean         @default(true)
+  planSlug                String?
+  roleKey                 String?
+  createdAt               DateTime          @default(now())
+
+  @@index([routePath])
+  @@index([pageSlug])
+  @@index([postSlug])
+}
+
+// ——— Commerce ———
+
+enum ProductType {
+  DIGITAL
+  PHYSICAL
+  SERVICE
+}
+
+model ProductCategory {
+  id          String    @id @default(cuid())
+  slug        String    @unique
+  name        String
+  description String?   @db.Text
+  products    Product[]
+}
+
+model Product {
+  id          String          @id @default(cuid())
+  slug        String          @unique
+  name        String
+  description String          @db.Text
+  status      ContentStatus   @default(DRAFT)
+  type        ProductType     @default(DIGITAL)
+  priceCents  Int
+  currency    String          @default("usd")
+  inventory   Int?
+  imageId     String?
+  categoryId  String?
+  stripePriceId String?
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  category   ProductCategory? @relation(fields: [categoryId], references: [id])
+  image      MediaAsset?      @relation(fields: [imageId], references: [id])
+  orderItems OrderItem[]
+  favorites  UserFavoriteProduct[]
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  FULFILLED
+  CANCELLED
+  REFUNDED
+}
+
+model Order {
+  id                    String      @id @default(cuid())
+  userId                String?
+  email                 String
+  status                OrderStatus @default(PENDING)
+  currency              String      @default("usd")
+  subtotalCents         Int
+  totalCents            Int
+  stripePaymentIntentId String?     @unique
+  stripeCheckoutSessionId String?   @unique
+  metadataJson          String?    @db.Text
+  createdAt             DateTime    @default(now())
+  updatedAt             DateTime    @updatedAt
+
+  user  User?       @relation(fields: [userId], references: [id])
+  items OrderItem[]
+}
+
+model OrderItem {
+  id         String @id @default(cuid())
+  orderId    String
+  productId  String
+  quantity   Int
+  unitCents  Int
+  nameSnapshot String
+
+  order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id])
+}
+
+// ——— Billing ———
+
+model Plan {
+  id                   String   @id @default(cuid())
+  slug                 String   @unique
+  name                 String
+  description          String?  @db.Text
+  stripePriceMonthlyId String?
+  stripePriceYearlyId  String?
+  monthlyAmountCents   Int?
+  yearlyAmountCents    Int?
+  featuresJson         String?  @db.Text
+  isDefaultFree        Boolean  @default(false)
+  trialDays            Int?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  subscriptions Subscription[]
+}
+
+enum SubscriptionStatus {
+  INCOMPLETE
+  TRIALING
+  ACTIVE
+  PAST_DUE
+  CANCELED
+  UNPAID
+}
+
+model Subscription {
+  id                   String               @id @default(cuid())
+  userId               String
+  planId               String
+  stripeCustomerId     String
+  stripeSubscriptionId String               @unique
+  status               SubscriptionStatus   @default(INCOMPLETE)
+  cancelAtPeriodEnd    Boolean              @default(false)
+  currentPeriodEnd     DateTime?
+  createdAt            DateTime             @default(now())
+  updatedAt            DateTime             @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plan Plan @relation(fields: [planId], references: [id])
+}
+
+// ——— Leads / forms ———
+
+enum LeadType {
+  CONTACT
+  NEWSLETTER
+  SUPPORT
+  CUSTOM
+}
+
+model FormSubmission {
+  id         String   @id @default(cuid())
+  type       LeadType
+  email      String?
+  name       String?
+  subject    String?
+  body       String?  @db.Text
+  payloadJson String  @db.Text
+  ipHash     String?
+  userAgent  String?  @db.Text
+  createdAt  DateTime @default(now())
+
+  @@index([type])
+  @@index([createdAt])
+}
+
+model NewsletterLead {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  source    String?
+  createdAt DateTime @default(now())
+}
+
+// ——— User extras ———
+
+model UserFavoritePost {
+  userId String
+  postId String
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post   Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@id([userId, postId])
+}
+
+model UserFavoriteProduct {
+  userId    String
+  productId String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@id([userId, productId])
+}
+
+model UserSettings {
+  userId            String  @id
+  marketingEmails   Boolean @default(false)
+  productUpdates    Boolean @default(true)
+  newsletterOptIn   Boolean @default(false)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  action    String
+  entity    String?
+  entityId  String?
+  metaJson  String?  @db.Text
+  createdAt DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id])
+
+  @@index([createdAt])
+}
+
+model DiscountCode {
+  id            String   @id @default(cuid())
+  code          String   @unique
+  percentOff    Int?
+  amountOffCents Int?
+  stripeCouponId String?
+  active        Boolean  @default(true)
+  expiresAt     DateTime?
+  createdAt     DateTime @default(now())
+}

@@ -1,0 +1,17 @@
+Frontend: React
+Full-stack framework: Vite-powered React SPA
+Backend: Node.js + Express
+Database: PostgreSQL
+ORM / data layer: Prisma
+Auth: Clerk or custom secure auth
+Payments: Stripe
+CMS/Admin approach: custom headless CMS/admin built as a secured SPA admin interface backed by Express APIs
+Styling: Tailwind CSS
+Forms/validation: React Hook Form + Zod
+Deployment target: Vercel/Netlify for frontend, Railway/Render/Fly.io or equivalent for backend
+Storage/media: S3 or equivalent object storage
+Email: Resend
+Search: PostgreSQL full-text search with abstraction for future Algolia/Meilisearch upgrade
+Analytics: PostHog or GA4-ready hooks
+
+Best for testing: fast frontend-only development experience with a classic decoupled backend.

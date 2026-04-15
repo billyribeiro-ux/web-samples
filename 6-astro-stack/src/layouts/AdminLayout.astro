@@ -1,0 +1,32 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Admin" noindex={true}>
+  <div class="mx-auto flex max-w-7xl gap-10 px-4 py-10">
+    <aside class="w-52 shrink-0 text-sm">
+      <p class="font-semibold text-white">CMS</p>
+      <nav class="mt-4 space-y-1">
+        <a class="block text-slate-400 hover:text-white" href="/admin">Dashboard</a>
+        <a class="block text-slate-400 hover:text-white" href="/admin/posts">Posts</a>
+        <a class="block text-slate-400 hover:text-white" href="/admin/pages">Pages</a>
+        <a class="block text-slate-400 hover:text-white" href="/admin/products">Products</a>
+        <a class="block text-slate-400 hover:text-white" href="/admin/orders">Orders</a>
+        <a class="block text-slate-400 hover:text-white" href="/admin/media">Media</a>
+        <a class="block text-slate-400 hover:text-white" href="/admin/navigation">Navigation</a>
+        <a class="block text-slate-400 hover:text-white" href="/admin/settings">Settings</a>
+        <a class="block text-slate-400 hover:text-white" href="/admin/seo">SEO</a>
+        <a class="block text-slate-400 hover:text-white" href="/admin/leads">Leads</a>
+        <a class="block text-slate-400 hover:text-white" href="/admin/forms">Forms</a>
+        <a class="block text-slate-400 hover:text-white" href="/admin/categories">Categories</a>
+        <a class="block text-slate-400 hover:text-white" href="/admin/tags">Tags</a>
+        <a class="block text-slate-400 hover:text-white" href="/admin/users">Users</a>
+        <a class="block text-slate-400 hover:text-white" href="/admin/roles">Roles</a>
+        <a class="block text-slate-400 hover:text-white" href="/admin/subscriptions">Subscriptions</a>
+      </nav>
+    </aside>
+    <div class="min-w-0 flex-1">
+      <slot />
+    </div>
+  </div>
+</BaseLayout>

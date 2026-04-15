@@ -1,0 +1,17 @@
+Frontend: Vue
+Full-stack framework: Nuxt
+Backend: Nuxt server routes / Nitro server
+Database: PostgreSQL
+ORM / data layer: Prisma
+Auth: Auth.js-compatible Nuxt approach, Lucia, or custom secure session auth
+Payments: Stripe
+CMS/Admin approach: custom headless CMS/admin built inside the Nuxt app with dedicated admin routes, content models, media handling, and role-based access
+Styling: Tailwind CSS
+Forms/validation: VeeValidate + Zod
+Deployment target: Vercel, Netlify, or Node server
+Storage/media: S3 or equivalent object storage
+Email: Resend
+Search: PostgreSQL full-text search with abstraction for future Algolia/Meilisearch upgrade
+Analytics: PostHog or GA4-ready hooks
+
+Best for testing: Vue-based full websites, SEO sites, memberships, subscriptions, business platforms, blogs, forms, and app/content hybrids.

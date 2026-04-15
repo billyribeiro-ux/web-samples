@@ -1,0 +1,43 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { apiServerFetch } from "../lib/api";
+
+const res = await apiServerFetch(Astro.request, "/v1/cart");
+const json = res.ok
+  ? ((await res.json()) as {
+      cart: { items: { quantity: number; product: { name: string; priceCents: number; currency: string } }[] };
+      guestKey?: string;
+    })
+  : null;
+---
+<Layout title="Cart" description="Your cart">
+  <h1 class="text-3xl font-semibold">Cart</h1>
+  {!json && <p class="mt-4 text-slate-600">Unable to load cart.</p>}
+  {json && (
+    <div class="mt-6 space-y-4">
+      {json.guestKey && (
+        <p class="text-xs text-slate-500">
+          Guest cart key (stored in response for this demo): <code>{json.guestKey}</code> — send header{" "}
+          <code>X-Guest-Cart</code> from the browser when using the API directly.
+        </p>
+      )}
+      {json.guestKey && (
+        <script define:vars={{ guestKey: json.guestKey }}>
+          sessionStorage.setItem("guestCart", guestKey);
+        </script>
+      )}
+      {json.cart.items.length === 0 && <p class="text-slate-600">Your cart is empty.</p>}
+      <ul class="divide-y divide-slate-200 rounded-xl border border-slate-200">
+        {json.cart.items.map((i) => (
+          <li class="flex items-center justify-between px-4 py-3">
+            <span class="font-medium">{i.product.name}</span>
+            <span class="text-sm text-slate-600">
+              ×{i.quantity} — {((i.product.priceCents * i.quantity) / 100).toFixed(2)} {i.product.currency.toUpperCase()}
+            </span>
+          </li>
+        ))}
+      </ul>
+      <a class="inline-flex rounded-md bg-accent px-4 py-2 text-sm font-semibold text-white" href="/checkout">Checkout</a>
+    </div>
+  )}
+</Layout>

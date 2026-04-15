@@ -1,0 +1,23 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { apiServerFetch } from "../../lib/api";
+
+const { slug } = Astro.params;
+if (!slug) return Astro.redirect("/404");
+const res = await apiServerFetch(Astro.request, `/v1/public/categories/${slug}`);
+if (!res.ok) return Astro.redirect("/404");
+const { category } = (await res.json()) as {
+  category: { name: string; posts: { post: { slug: string; title: string; excerpt: string | null } }[] };
+};
+---
+<Layout title={`Category: ${category.name}`} description={`Posts in ${category.name}`}>
+  <h1 class="text-3xl font-semibold">{category.name}</h1>
+  <ul class="mt-8 space-y-4">
+    {category.posts.map(({ post }) => (
+      <li>
+        <a class="font-semibold text-accent hover:underline" href={`/blog/${post.slug}`}>{post.title}</a>
+        {post.excerpt && <p class="text-sm text-slate-600">{post.excerpt}</p>}
+      </li>
+    ))}
+  </ul>
+</Layout>

@@ -1,0 +1,21 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { LoginForm } from '@/components/auth/LoginForm';
+
+const next = Astro.url.searchParams.get('next') ?? undefined;
+---
+
+<BaseLayout title="Log in" description="Sign in to your account." noindex={true}>
+  <div class="mx-auto max-w-xl px-4 py-16">
+    <h1 class="text-center text-3xl font-semibold text-white">Log in</h1>
+    <p class="mt-2 text-center text-sm text-slate-400">
+      No account?{' '}
+      <a class="text-emerald-400 hover:underline" href="/register">
+        Create one
+      </a>
+    </p>
+    <div class="mt-10">
+      <LoginForm client:load next={next} />
+    </div>
+  </div>
+</BaseLayout>

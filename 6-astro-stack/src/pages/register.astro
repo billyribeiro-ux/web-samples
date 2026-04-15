@@ -1,0 +1,19 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { RegisterForm } from '@/components/auth/RegisterForm';
+---
+
+<BaseLayout title="Create account" noindex={true}>
+  <div class="mx-auto max-w-xl px-4 py-16">
+    <h1 class="text-center text-3xl font-semibold text-white">Register</h1>
+    <p class="mt-2 text-center text-sm text-slate-400">
+      Already have an account?{' '}
+      <a class="text-emerald-400 hover:underline" href="/login">
+        Log in
+      </a>
+    </p>
+    <div class="mt-10">
+      <RegisterForm client:load />
+    </div>
+  </div>
+</BaseLayout>

@@ -1,0 +1,27 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { apiServerFetch } from "../../lib/api";
+
+const res = await apiServerFetch(Astro.request, "/v1/account/favorites");
+if (res.status === 401) return Astro.redirect("/login");
+const { favorites } = (await res.json()) as { favorites: { post: { title: string; slug: string } | null; product: { name: string; slug: string } | null }[] };
+---
+<Layout title="Favorites" description="Saved items">
+  <h1 class="text-2xl font-semibold">Favorites</h1>
+  <ul class="mt-4 space-y-2 text-sm">
+    {favorites.map((f) => (
+      <li>
+        {f.post && (
+          <a class="text-accent hover:underline" href={`/blog/${f.post.slug}`}>
+            {f.post.title}
+          </a>
+        )}
+        {f.product && (
+          <a class="text-accent hover:underline" href={`/products/${f.product.slug}`}>
+            {f.product.name}
+          </a>
+        )}
+      </li>
+    ))}
+  </ul>
+</Layout>

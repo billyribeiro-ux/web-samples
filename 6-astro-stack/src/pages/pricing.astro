@@ -1,0 +1,37 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { prisma } from '@/lib/prisma';
+
+const plans = await prisma.plan.findMany({ orderBy: { sortOrder: 'asc' } });
+---
+
+<BaseLayout title="Pricing — Astro Business" description="Plans for individuals and growing teams.">
+  <div class="mx-auto max-w-5xl px-4 py-16">
+    <h1 class="text-center text-3xl font-semibold text-white">Pricing</h1>
+    <p class="mx-auto mt-3 max-w-2xl text-center text-slate-400">
+      Stripe Checkout integration is wired for subscriptions — connect Price IDs in production.
+    </p>
+    <div class="mt-12 grid gap-6 md:grid-cols-2">
+      {plans.map((p) => (
+        <div class="rounded-2xl border border-slate-800 bg-slate-900/60 p-8">
+          <h2 class="text-xl font-semibold text-white">{p.name}</h2>
+          <p class="mt-2 text-sm text-slate-400">{p.description}</p>
+          <p class="mt-6 text-3xl font-bold text-white">
+            {p.amountMonthly === 0 ? 'Free' : `$${(p.amountMonthly ?? 0) / 100}/mo`}
+          </p>
+          <form method="post" action="/api/checkout/subscription" class="mt-6">
+            <input type="hidden" name="planSlug" value={p.slug} />
+            <input type="hidden" name="interval" value="month" />
+            <button
+              type="submit"
+              class="w-full rounded-lg bg-emerald-500 py-2 text-sm font-semibold text-slate-950 hover:bg-emerald-400 disabled:opacity-50"
+              disabled={p.slug === 'free'}
+            >
+              {p.slug === 'free' ? 'Current tier' : 'Subscribe'}
+            </button>
+          </form>
+        </div>
+      ))}
+    </div>
+  </div>
+</BaseLayout>

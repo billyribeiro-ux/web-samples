@@ -1,0 +1,42 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { apiServerFetch } from "../lib/api";
+
+const res = await apiServerFetch(Astro.request, "/v1/public/plans");
+const { plans } = res.ok
+  ? ((await res.json()) as {
+      plans: {
+        name: string;
+        slug: string;
+        description: string | null;
+        amountMonthlyCents: number;
+        amountYearlyCents: number | null;
+        currency: string;
+      }[];
+    })
+  : { plans: [] };
+---
+<Layout title="Pricing" description="Plans for members and subscribers.">
+  <h1 class="text-3xl font-semibold text-ink">Pricing</h1>
+  <p class="mt-3 max-w-2xl text-slate-600">Stripe-backed subscriptions with upgrade/downgrade paths in the admin.</p>
+  <div class="mt-10 grid gap-6 md:grid-cols-2">
+    {plans.map((plan) => (
+      <div class="rounded-2xl border border-slate-200 bg-mist p-8">
+        <h2 class="text-xl font-semibold">{plan.name}</h2>
+        {plan.description && <p class="mt-2 text-sm text-slate-600">{plan.description}</p>}
+        <p class="mt-6 text-3xl font-bold text-ink">
+          {plan.amountMonthlyCents === 0 ? "Free" : `$${(plan.amountMonthlyCents / 100).toFixed(0)}`}
+          {plan.amountMonthlyCents !== 0 && <span class="text-base font-normal text-slate-600">/mo</span>}
+        </p>
+        {plan.amountYearlyCents ? (
+          <p class="mt-2 text-sm text-slate-600">
+            Yearly: ${(plan.amountYearlyCents / 100).toFixed(0)} {plan.currency.toUpperCase()}
+          </p>
+        ) : null}
+        <a
+          class="mt-6 inline-flex rounded-md bg-accent px-4 py-2 text-sm font-semibold text-white hover:bg-blue-600"
+          href="/register">Get started</a>
+      </div>
+    ))}
+  </div>
+</Layout>

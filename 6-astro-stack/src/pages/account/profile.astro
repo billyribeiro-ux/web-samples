@@ -1,0 +1,13 @@
+---
+import AccountLayout from '@/layouts/AccountLayout.astro';
+
+const user = Astro.locals.user;
+if (!user) throw new Error('unreachable');
+---
+
+<AccountLayout title="Profile">
+  <p class="text-slate-400">
+    Display name: <span class="text-white">{user.name}</span>
+  </p>
+  <p class="mt-2 text-sm text-slate-500">Profile editing can post to a dedicated API route with Zod validation.</p>
+</AccountLayout>

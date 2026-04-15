@@ -1,0 +1,40 @@
+---
+import AccountLayout from '@/layouts/AccountLayout.astro';
+import { prisma } from '@/lib/prisma';
+
+const user = Astro.locals.user;
+if (!user) throw new Error('unreachable');
+
+const subs = await prisma.subscription.findMany({
+  where: { userId: user.id },
+  include: { plan: true },
+  orderBy: { createdAt: 'desc' },
+});
+---
+
+<AccountLayout title="Subscription">
+  <section class="space-y-6 text-slate-100">
+    {subs.length === 0 && (
+      <p class="text-slate-400">No active subscriptions yet. Subscribe from the pricing page when Stripe Price IDs are configured.</p>
+    )}
+    {subs.length > 0 && (
+      <ul class="space-y-4">
+        {subs.map((s) => (
+          <li class="rounded-lg border border-slate-800 bg-slate-900/40 p-4 text-sm">
+            <p class="font-medium text-white">{s.plan.name}</p>
+            <p class="text-slate-500">
+              Status: {s.status}
+              {s.currentPeriodEnd && ` · Renews ${s.currentPeriodEnd.toISOString().slice(0, 10)}`}
+            </p>
+          </li>
+        ))}
+      </ul>
+    )}
+    <form method="post" action="/api/billing/portal" class="pt-2">
+      <button type="submit" class="rounded-md border border-slate-600 px-4 py-2 text-sm text-white hover:bg-slate-800">
+        Open billing portal
+      </button>
+    </form>
+    <p class="text-xs text-slate-500">Requires a Stripe customer id (created after a successful Checkout).</p>
+  </section>
+</AccountLayout>

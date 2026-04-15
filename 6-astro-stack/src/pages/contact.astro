@@ -1,0 +1,14 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { ContactForm } from '@/components/forms/ContactForm';
+---
+
+<BaseLayout title="Contact — Astro Business" description="Reach the team — validated server-side.">
+  <div class="mx-auto max-w-xl px-4 py-16">
+    <h1 class="text-3xl font-semibold text-white">Contact</h1>
+    <p class="mt-2 text-slate-400">We respond within a few business days.</p>
+    <div class="mt-8">
+      <ContactForm client:load />
+    </div>
+  </div>
+</BaseLayout>

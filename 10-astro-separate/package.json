@@ -1,0 +1,22 @@
+{
+  "name": "astro-platform",
+  "private": true,
+  "scripts": {
+    "dev": "turbo dev --filter=web --filter=admin --filter=@repo/api",
+    "build": "turbo build",
+    "lint": "turbo lint",
+    "db:migrate": "pnpm --filter @repo/db exec prisma migrate deploy",
+    "db:push": "pnpm --filter @repo/db exec prisma db push",
+    "db:seed": "pnpm --filter @repo/db exec prisma db seed",
+    "db:generate": "pnpm --filter @repo/db exec prisma generate",
+    "db:studio": "pnpm --filter @repo/db exec prisma studio"
+  },
+  "devDependencies": {
+    "turbo": "^2.5.4",
+    "typescript": "^5.8.3"
+  },
+  "packageManager": "pnpm@9.15.4",
+  "engines": {
+    "node": ">=20"
+  }
+}

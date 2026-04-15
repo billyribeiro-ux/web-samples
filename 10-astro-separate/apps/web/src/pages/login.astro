@@ -1,0 +1,38 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { apiUrl } from "../lib/api";
+
+const loginUrl = apiUrl("/v1/auth/login");
+---
+<Layout title="Log in" description="Member sign in">
+  <h1 class="text-3xl font-semibold">Log in</h1>
+  <form id="login-form" class="mt-8 max-w-md space-y-4">
+    <div>
+      <label class="block text-sm font-medium" for="email">Email</label>
+      <input class="mt-1 w-full rounded-md border px-3 py-2 text-sm" id="email" type="email" required />
+    </div>
+    <div>
+      <label class="block text-sm font-medium" for="password">Password</label>
+      <input class="mt-1 w-full rounded-md border px-3 py-2 text-sm" id="password" type="password" required />
+    </div>
+    <p id="lg-status" class="text-sm text-slate-600" />
+    <button class="rounded-md bg-accent px-4 py-2 text-sm font-semibold text-white" type="submit">Sign in</button>
+  </form>
+  <script define:vars={{ loginUrl }}>
+    document.getElementById("login-form")?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const status = document.getElementById("lg-status");
+      const email = (document.getElementById("email") as HTMLInputElement).value;
+      const password = (document.getElementById("password") as HTMLInputElement).value;
+      status.textContent = "Signing in…";
+      const res = await fetch(loginUrl, {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password, scope: "MEMBER" }),
+      });
+      if (res.ok) window.location.href = "/account";
+      else status.textContent = "Invalid credentials.";
+    });
+  </script>
+</Layout>

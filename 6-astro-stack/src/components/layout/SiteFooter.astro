@@ -1,0 +1,29 @@
+---
+const year = new Date().getFullYear();
+---
+
+<footer class="border-t border-slate-800/60 bg-slate-950">
+  <div class="mx-auto grid max-w-6xl gap-8 px-4 py-12 md:grid-cols-3">
+    <div>
+      <p class="text-sm font-semibold text-white">Astro Business</p>
+      <p class="mt-2 text-sm text-slate-400">Marketing site, memberships, and light commerce — built on Astro 6.</p>
+    </div>
+    <div>
+      <p class="text-sm font-semibold text-white">Product</p>
+      <ul class="mt-2 space-y-1 text-sm text-slate-400">
+        <li><a class="hover:text-white" href="/pricing">Pricing</a></li>
+        <li><a class="hover:text-white" href="/services">Services</a></li>
+        <li><a class="hover:text-white" href="/blog">Blog</a></li>
+      </ul>
+    </div>
+    <div>
+      <p class="text-sm font-semibold text-white">Legal</p>
+      <ul class="mt-2 space-y-1 text-sm text-slate-400">
+        <li><a class="hover:text-white" href="/privacy-policy">Privacy</a></li>
+        <li><a class="hover:text-white" href="/terms">Terms</a></li>
+        <li><a class="hover:text-white" href="/cookies">Cookies</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="border-t border-slate-800/60 py-4 text-center text-xs text-slate-500">© {year} Astro Business. Demo deployment.</div>
+</footer>

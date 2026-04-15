@@ -1,0 +1,22 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { apiServerFetch } from "../../lib/api";
+
+const path = Astro.params.path ?? "";
+const slug = path.replace(/\/$/, "");
+if (!slug) return Astro.redirect("/404");
+
+const res = await apiServerFetch(Astro.request, `/v1/members/${slug}`);
+if (res.status === 401) return Astro.redirect("/login");
+if (res.status === 403) {
+  return new Response("Subscription required", { status: 403 });
+}
+if (!res.ok) return Astro.redirect("/404");
+const { rule } = (await res.json()) as { rule: { title: string; body: string } };
+---
+<Layout title={rule.title} description="Members">
+  <article>
+    <h1 class="text-3xl font-semibold">{rule.title}</h1>
+    <div class="prose prose-slate mt-6 max-w-none whitespace-pre-wrap">{rule.body}</div>
+  </article>
+</Layout>

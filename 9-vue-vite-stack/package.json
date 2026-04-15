@@ -1,0 +1,24 @@
+{
+  "name": "vue-express-platform",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently -n api,web -c blue,green \"pnpm --filter api dev\" \"pnpm --filter web dev\"",
+    "build": "pnpm --filter @repo/db build && pnpm --filter shared build && pnpm --filter api build && pnpm --filter web build",
+    "db:generate": "pnpm --filter @repo/db prisma generate",
+    "db:migrate": "pnpm --filter @repo/db exec prisma migrate dev",
+    "db:push": "pnpm --filter @repo/db exec prisma db push",
+    "db:seed": "pnpm --filter @repo/db prisma db seed",
+    "lint": "eslint . --max-warnings 0",
+    "format": "prettier -w ."
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.1",
+    "concurrently": "^9.2.1",
+    "eslint": "^9.39.1",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^16.5.0",
+    "prettier": "^3.6.2",
+    "typescript-eslint": "^8.46.2"
+  },
+  "packageManager": "pnpm@10.18.3"
+}

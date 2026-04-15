@@ -1,0 +1,17 @@
+Frontend: Svelte
+Full-stack framework: SvelteKit
+Backend: SvelteKit server routes / form actions / endpoints
+Database: PostgreSQL
+ORM / data layer: Prisma or Drizzle
+Auth: Lucia, custom secure session auth, or SvelteKit-compatible auth solution
+Payments: Stripe
+CMS/Admin approach: custom headless CMS/admin built inside the SvelteKit app with role-based admin routes, content management, media library, and business ops modules
+Styling: Tailwind CSS
+Forms/validation: Zod + SvelteKit form actions + schema-driven validation
+Deployment target: Vercel or Node adapter target
+Storage/media: S3 or equivalent object storage
+Email: Resend
+Search: PostgreSQL full-text search with abstraction for future Algolia/Meilisearch upgrade
+Analytics: PostHog or GA4-ready hooks
+
+Best for testing: premium UX builds, polished dashboards, fast-feeling custom web apps, lean full-stack business platforms.

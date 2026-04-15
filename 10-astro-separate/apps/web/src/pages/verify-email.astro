@@ -1,0 +1,26 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { apiUrl } from "../lib/api";
+
+const url = apiUrl("/v1/auth/verify-email");
+const token = Astro.url.searchParams.get("token") ?? "";
+---
+<Layout title="Verify email" description="Email verification">
+  <h1 class="text-3xl font-semibold">Verify email</h1>
+  <p id="st" class="mt-4 text-slate-600">Verifying…</p>
+  <script define:vars={{ url, token }}>
+    (async () => {
+      const st = document.getElementById("st");
+      if (!token) {
+        st.textContent = "Missing token.";
+        return;
+      }
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token }),
+      });
+      st.textContent = res.ok ? "Email verified. You can sign in." : "Invalid or expired token.";
+    })();
+  </script>
+</Layout>

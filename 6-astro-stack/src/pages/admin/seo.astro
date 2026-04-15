@@ -1,0 +1,14 @@
+---
+import AdminLayout from '@/layouts/AdminLayout.astro';
+---
+
+<AdminLayout>
+  <h1 class="text-2xl font-semibold text-white">SEO</h1>
+  <p class="mt-4 max-w-2xl text-sm text-slate-400">
+    Global metadata is composed in <code class="text-emerald-400">BaseLayout</code>. Per-route SEO lives on <code class="text-emerald-400">Post</code>,{' '}
+    <code class="text-emerald-400">Page</code>, and <code class="text-emerald-400">Product</code> models. Sitemap:{' '}
+    <a class="text-emerald-400 hover:underline" href="/sitemap.xml">
+      /sitemap.xml
+    </a>
+  </p>
+</AdminLayout>

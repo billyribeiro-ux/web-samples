@@ -1,0 +1,53 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { apiServerFetch } from "../lib/api";
+
+const q = Astro.url.searchParams.get("q")?.trim() ?? "";
+let hits: { kind: string; title: string; slug: string }[] = [];
+if (q) {
+  const res = await apiServerFetch(Astro.request, `/v1/search?q=${encodeURIComponent(q)}`);
+  if (res.ok) {
+    const j = (await res.json()) as { hits: { kind: string; title: string; slug: string }[] };
+    hits = j.hits;
+  }
+}
+---
+<Layout title={q ? `Search: ${q}` : "Search"} description="Search posts, products, and pages.">
+  <h1 class="text-3xl font-semibold">Search</h1>
+  <form class="mt-6 flex gap-2" method="get" action="/search">
+    <label class="sr-only" for="q">Query</label>
+    <input
+      id="q"
+      name="q"
+      value={q}
+      class="w-full max-w-xl rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-accent focus:outline-none"
+      placeholder="Try “SEO”, “playbook”, or “about”"
+    />
+    <button class="rounded-md bg-accent px-4 py-2 text-sm font-semibold text-white" type="submit">Search</button>
+  </form>
+  {q && (
+    <div class="mt-10">
+      <h2 class="text-lg font-semibold">Results</h2>
+      <ul class="mt-4 space-y-3">
+        {hits.length === 0 && <li class="text-slate-600">No matches.</li>}
+        {hits.map((h) => (
+          <li>
+            <span class="text-xs uppercase text-slate-500">{h.kind}</span>{" "}
+            <a
+              class="font-medium text-accent hover:underline"
+              href={
+                h.kind === "post"
+                  ? `/blog/${h.slug}`
+                  : h.kind === "product"
+                    ? `/products/${h.slug}`
+                    : `/${h.slug}`
+              }
+            >
+              {h.title}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )}
+</Layout>

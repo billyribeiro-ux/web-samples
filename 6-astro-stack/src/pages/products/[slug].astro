@@ -1,0 +1,39 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { prisma } from '@/lib/prisma';
+
+const { slug } = Astro.params;
+if (!slug) throw new Error('slug');
+
+const product = await prisma.product.findFirst({
+  where: { slug, isActive: true },
+});
+
+if (!product) {
+  return Astro.redirect('/404');
+}
+---
+
+<BaseLayout
+  title={`${product.name} — Products`}
+  description={product.description.slice(0, 160)}
+  jsonLd="product"
+  jsonLdProduct={{
+    title: product.name,
+    description: product.description.slice(0, 300),
+    price: product.price / 100,
+    currency: product.currency.toUpperCase(),
+  }}
+>
+  <div class="mx-auto max-w-3xl px-4 py-16">
+    <h1 class="text-3xl font-semibold text-white">{product.name}</h1>
+    <p class="mt-4 text-2xl font-bold text-white">${(product.price / 100).toFixed(2)}</p>
+    <div class="mt-8 space-y-4 text-slate-300" set:html={product.description} />
+    <form method="post" action="/api/checkout/product" class="mt-10">
+      <input type="hidden" name="productId" value={product.id} />
+      <button type="submit" class="rounded-lg bg-emerald-500 px-5 py-3 text-sm font-semibold text-slate-950 hover:bg-emerald-400">
+        Buy now
+      </button>
+    </form>
+  </div>
+</BaseLayout>

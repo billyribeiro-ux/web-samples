@@ -1,0 +1,12 @@
+node_modules
+dist
+.output
+.vercel
+.turbo
+.env
+.env.local
+*.log
+.DS_Store
+apps/web/.astro
+coverage
+prisma/migrations/**/migration_lock.toml

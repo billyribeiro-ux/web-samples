@@ -1,0 +1,28 @@
+---
+import AdminLayout from '@/layouts/AdminLayout.astro';
+import { prisma } from '@/lib/prisma';
+
+const products = await prisma.product.findMany({ orderBy: { updatedAt: 'desc' } });
+---
+
+<AdminLayout>
+  <h1 class="text-2xl font-semibold text-white">Products</h1>
+  <table class="mt-8 w-full text-left text-sm">
+    <thead>
+      <tr class="border-b border-slate-800 text-slate-500">
+        <th class="py-2">Name</th>
+        <th class="py-2">Price</th>
+        <th class="py-2">Active</th>
+      </tr>
+    </thead>
+    <tbody>
+      {products.map((p) => (
+        <tr class="border-b border-slate-800/80">
+          <td class="py-3 text-white">{p.name}</td>
+          <td class="py-3 text-slate-400">${(p.price / 100).toFixed(2)}</td>
+          <td class="py-3 text-slate-400">{p.isActive ? 'yes' : 'no'}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</AdminLayout>

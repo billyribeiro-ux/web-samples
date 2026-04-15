@@ -1,0 +1,28 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { prisma } from '@/lib/prisma';
+
+const user = Astro.locals.user;
+if (!user) throw new Error('unreachable');
+
+const roles = Astro.locals.roles;
+const sub = await prisma.subscription.findFirst({
+  where: { userId: user.id, status: { in: ['ACTIVE', 'TRIALING'] } },
+});
+
+const allowed = Boolean(sub) || roles.includes('subscriber') || roles.includes('admin') || roles.includes('superadmin');
+
+if (!allowed) {
+  return Astro.redirect('/pricing?gated=1');
+}
+---
+
+<BaseLayout title="Members library" noindex={true}>
+  <div class="mx-auto max-w-3xl px-4 py-16">
+    <h1 class="text-3xl font-semibold text-white">Members library</h1>
+    <p class="mt-4 text-slate-400">
+      This area is protected by subscription status or the subscriber role. Connect Stripe webhooks to sync `Subscription` rows from
+      Checkout.
+    </p>
+  </div>
+</BaseLayout>

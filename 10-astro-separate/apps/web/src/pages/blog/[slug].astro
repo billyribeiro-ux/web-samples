@@ -1,0 +1,35 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { apiServerFetch } from "../../lib/api";
+
+const { slug } = Astro.params;
+if (!slug) return Astro.redirect("/404");
+
+const res = await apiServerFetch(Astro.request, `/v1/public/posts/${slug}`);
+if (!res.ok) return Astro.redirect("/404");
+const { post } = (await res.json()) as {
+  post: {
+    title: string;
+    excerpt: string | null;
+    body: string;
+    seoTitle: string | null;
+    seoDescription: string | null;
+    canonicalUrl: string | null;
+    publishedAt: string | null;
+    readingMinutes: number | null;
+  };
+};
+const title = post.seoTitle ?? post.title;
+const desc = post.seoDescription ?? post.excerpt ?? post.title;
+---
+<Layout title={title} description={desc} canonical={post.canonicalUrl ?? undefined}>
+  <article>
+    <p class="text-sm text-slate-500">
+      {post.publishedAt ? new Date(post.publishedAt).toLocaleDateString() : ""}
+      {post.readingMinutes ? ` · ${post.readingMinutes} min read` : ""}
+    </p>
+    <h1 class="mt-2 text-4xl font-semibold text-ink">{post.title}</h1>
+    {post.excerpt && <p class="mt-4 text-lg text-slate-600">{post.excerpt}</p>}
+    <div class="prose prose-slate mt-10 max-w-none whitespace-pre-wrap">{post.body}</div>
+  </article>
+</Layout>

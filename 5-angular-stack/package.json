@@ -1,0 +1,32 @@
+{
+  "name": "angular-nest-platform",
+  "private": true,
+  "packageManager": "pnpm@9.15.4",
+  "scripts": {
+    "build": "pnpm run -r build",
+    "dev:api": "pnpm --filter api start:dev",
+    "dev:web": "pnpm --filter web start",
+    "dev:all": "concurrently -n api,web -c blue,green \"pnpm dev:api\" \"pnpm dev:web\"",
+    "stack:docker": "docker compose up -d postgres minio",
+    "stack:db": "prisma migrate deploy && prisma db seed",
+    "stack:up": "pnpm run stack:docker && bash scripts/wait-for-postgres.sh && pnpm run stack:db",
+    "stack:reset": "bash scripts/bootstrap.sh",
+    "stack:local-pg": "bash scripts/start-local-postgres.sh && pnpm run stack:db",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:seed": "prisma db seed",
+    "db:studio": "prisma studio"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.19.3"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "prisma": "^6.19.3",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3"
+  }
+}

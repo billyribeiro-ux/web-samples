@@ -1,0 +1,29 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { apiServerFetch } from "../../lib/api";
+
+const res = await apiServerFetch(Astro.request, "/v1/account/orders");
+if (res.status === 401) return Astro.redirect("/login");
+const { orders } = (await res.json()) as {
+  orders: { id: string; status: string; totalCents: number; currency: string; items: { quantity: number; product: { name: string } }[] }[];
+};
+---
+<Layout title="Orders" description="Order history">
+  <h1 class="text-2xl font-semibold">Orders</h1>
+  <ul class="mt-6 space-y-4">
+    {orders.map((o) => (
+      <li class="rounded-lg border border-slate-200 p-4 text-sm">
+        <div class="font-semibold">
+          {o.id.slice(0, 8)}… — {o.status} — {(o.totalCents / 100).toFixed(2)} {o.currency.toUpperCase()}
+        </div>
+        <ul class="mt-2 text-slate-600">
+          {o.items.map((i) => (
+            <li>
+              {i.product.name} ×{i.quantity}
+            </li>
+          ))}
+        </ul>
+      </li>
+    ))}
+  </ul>
+</Layout>

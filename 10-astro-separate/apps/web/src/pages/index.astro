@@ -1,0 +1,49 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { getBrand, getHomepage } from "../lib/content";
+
+const brand = await getBrand(Astro.request);
+const homepage = await getHomepage(Astro.request);
+const title = (homepage.heroTitle as string) ?? (brand.siteName as string) ?? "Nimbus Platform";
+const subtitle =
+  (homepage.heroSubtitle as string) ??
+  (brand.tagline as string) ??
+  "Premium marketing, memberships, commerce, and publishing.";
+const secondary = homepage.heroSecondaryCta as { label?: string; href?: string } | undefined;
+---
+<Layout
+  title={title}
+  description={subtitle}
+  jsonLd={{
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: brand.siteName ?? "Nimbus Platform",
+    url: import.meta.env.PUBLIC_SITE_URL ?? Astro.url.origin,
+  }}
+>
+  <section class="grid gap-10 md:grid-cols-[1.1fr_0.9fr] md:items-center">
+    <div class="space-y-6">
+      <p class="text-sm font-semibold uppercase tracking-wide text-accent">Modern business platform</p>
+      <h1 class="text-4xl font-semibold tracking-tight text-ink md:text-5xl">{title}</h1>
+      <p class="text-lg text-slate-600">{subtitle}</p>
+      <div class="flex flex-wrap gap-3">
+        <a
+          class="rounded-md bg-accent px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-blue-600"
+          href={(brand.primaryCtaHref as string) ?? "/contact"}>{(brand.primaryCtaLabel as string) ?? "Book a demo"}</a>
+        {secondary?.href && (
+          <a class="rounded-md border border-slate-300 px-5 py-3 text-sm font-semibold text-slate-800 hover:bg-slate-50" href={secondary.href}>
+            {secondary.label}
+          </a>
+        )}
+      </div>
+    </div>
+    <div class="rounded-2xl border border-slate-200 bg-mist p-8 shadow-sm">
+      <h2 class="text-lg font-semibold text-ink">Built for serious teams</h2>
+      <ul class="mt-4 space-y-3 text-sm text-slate-700">
+        <li>SEO-first publishing with metadata, feeds, and structured data hooks.</li>
+        <li>Memberships, subscriptions, and commerce on one data model.</li>
+        <li>Headless CMS admin with RBAC, audit-friendly tables, and media workflows.</li>
+      </ul>
+    </div>
+  </section>
+</Layout>

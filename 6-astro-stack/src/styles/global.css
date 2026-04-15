@@ -1,0 +1,18 @@
+@import 'tailwindcss';
+
+/* Ensure every route is scanned (Vite + nested layouts can miss classes without this). */
+@source '../**/*.{astro,ts,tsx}';
+
+/* Fallback so pages never render as default white browser chrome if utilities are missing. */
+@layer base {
+  html {
+    background-color: rgb(2 6 23);
+    color: rgb(241 245 249);
+  }
+
+  body {
+    min-height: 100vh;
+    background-color: rgb(2 6 23);
+    color: rgb(241 245 249);
+  }
+}

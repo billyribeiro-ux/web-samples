@@ -1,0 +1,54 @@
+{
+  "name": "astro-business-platform",
+  "type": "module",
+  "version": "0.0.1",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "check": "astro check",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate deploy",
+    "db:push": "prisma db push",
+    "db:seed": "tsx prisma/seed.ts",
+    "db:studio": "prisma studio",
+    "format": "prettier -w ."
+  },
+  "dependencies": {
+    "@astrojs/react": "^5.0.3",
+    "@astrojs/vercel": "^10.0.4",
+    "@aws-sdk/client-s3": "^3.1030.0",
+    "@aws-sdk/s3-request-presigner": "^3.1030.0",
+    "@better-auth/prisma-adapter": "^1.6.3",
+    "@prisma/adapter-pg": "^7.7.0",
+    "@prisma/client": "^7.7.0",
+    "@tailwindcss/vite": "^4.2.2",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "astro": "^6.1.6",
+    "bcryptjs": "^3.0.3",
+    "better-auth": "^1.6.3",
+    "dotenv": "^17.4.2",
+    "pg": "^8.20.0",
+    "posthog-js": "^1.369.0",
+    "prisma": "^7.7.0",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
+    "resend": "^6.11.0",
+    "stripe": "^22.0.1",
+    "tailwindcss": "^4.2.2",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.8",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/pg": "^8.20.0",
+    "prettier": "^3.8.3",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  }
+}
